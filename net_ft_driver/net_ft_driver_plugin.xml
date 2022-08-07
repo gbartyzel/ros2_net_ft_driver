@@ -1,0 +1,9 @@
+<library path="net_ft_driver">
+  <class name="net_ft_driver/NetFTHardwareInterface" 
+         type="net_ft_driver::NetFTHardwareInterface" 
+         base_class_type="hardware_interface::SensorInterface">
+    <description>
+                ROS2 controller for the Net F/T sensors.
+    </description>
+  </class>
+</library>

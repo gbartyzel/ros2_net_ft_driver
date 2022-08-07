@@ -1,0 +1,7 @@
+<library path="net_ft_diagnostic_broadcaster">
+  <class name="net_ft_diagnostic_broadcaster/NetFTDiagnosticBroadcaster" type="net_ft_diagnostic_broadcaster::NetFTDiagnosticBroadcaster" base_class_type="controller_interface::ControllerInterface">
+    <description>
+      This controller publishes the diagnostic data of the F/T sensor.
+    </description>
+  </class>
+</library>
