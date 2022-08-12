@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="net_ft_sensor_ros2_control" params="name ip_address sensor_type rdt_sampling_rate:=500 adc_sampling_rate:=976">
+    <xacro:macro name="net_ft_sensor_ros2_control" params="name prefix ip_address sensor_type rdt_sampling_rate:=500 adc_sampling_rate:=976">
         <ros2_control name="${name}" type="sensor">
             <hardware>
                 <plugin>net_ft_driver/NetFTHardwareInterface</plugin>
@@ -10,7 +10,7 @@
                 <param name="adc_sampling_rate">${adc_sampling_rate}</param>
             </hardware>
 
-            <sensor name="${prefix}net_ft_sensor">
+            <sensor name="${prefix}tcp_fts_sensor">
               <state_interface name="force.x"/>
               <state_interface name="force.y"/>
               <state_interface name="force.z"/>
@@ -18,14 +18,14 @@
               <state_interface name="torque.y"/>
               <state_interface name="torque.z"/>
               <param name="frame_id">tool_link</param>
-              <param name="fx_range">100</param>
-              <param name="fy_range">100</param>
-              <param name="fz_range">100</param>
-              <param name="tx_range">15</param>
-              <param name="ty_range">15</param>
-              <param name="tz_range">15</param>
           </sensor>
+
+          <gpio name="diagnostic">
+            <state_interface name="packet_count"/>
+            <state_interface name="lost_packets"/>
+            <state_interface name="out_of_order_count"/>
+            <state_interface name="status"/>
+          </gpio>
         </ros2_control>
     </xacro:macro>
-
 </robot>
