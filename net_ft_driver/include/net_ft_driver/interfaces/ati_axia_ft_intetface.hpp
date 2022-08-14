@@ -13,8 +13,6 @@ public:
   AtiAxiaFTInterface() = delete;
 
   bool set_sampling_rate(int rate);
-
-  bool set_adc_sampling_rate(int rate);
 };
 }  // namespace net_ft_driver
 

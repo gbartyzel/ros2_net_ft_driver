@@ -11,18 +11,15 @@ AtiAxiaFTInterface::AtiAxiaFTInterface(const std::string & ip_address) : NetFTIn
 
 bool AtiAxiaFTInterface::set_sampling_rate(int rate)
 {
+  for(auto it = kAllowedADCFrequency.begin(); it != kAllowedADCFrequency.end(); it++){
+    if(rate < *it) {
+      set_cgi_variable("setting.cgi", "setadcrate", *it);
+      break;
+    }
+  }
   auto response = get_config("netftapi2.xml");
   int current_rate = std::stoi(parse_config(response, "netFTApi", "setrate"));
   rate = std::min(min_sampling_freq_, std::max(rate, current_rate));
   return set_cgi_variable("comm.cgi", "commrdtrate", rate);
-}
-
-bool AtiAxiaFTInterface::set_adc_sampling_rate(int rate)
-{
-  if (std::find(kAllowedADCFrequency.begin(), kAllowedADCFrequency.end(), rate))
-  {
-    return set_cgi_variable("setting.cgi", "setadcrate", rate);
-  }
-  return false;
 }
 }  // namespace net_ft_driver

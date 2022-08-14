@@ -38,8 +38,6 @@ public:
 
   virtual bool set_sampling_rate(int rate);
 
-  virtual bool set_adc_sampling_rate(int rate);
-
   std::unique_ptr<SensorData> receive_data();
 
 protected:

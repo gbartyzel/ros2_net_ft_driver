@@ -38,13 +38,6 @@ hardware_interface::CallbackReturn NetFtHardwareInterface::on_init(const hardwar
   else if (sensor_type_ == "ati_axia")
   {
     driver_ = std::make_unique<AtiAxiaFTInterface>(ip_address_);
-
-    auto adc_rate = std::stoi(info_.hardware_parameters["adc_sampling_rate"]);
-    if (!driver_->set_adc_sampling_rate(adc_rate))
-    {
-      RCLCPP_FATAL(kLogger, "Couldn't set ADC sampling rate of the ATI Axia F/T Sensor");
-      return CallbackReturn::ERROR;
-    }
   }
   else if (sensor_type_ == "onrobot")
   {

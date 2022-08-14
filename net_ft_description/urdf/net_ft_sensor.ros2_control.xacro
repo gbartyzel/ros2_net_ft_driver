@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="net_ft_sensor_ros2_control" params="name prefix ip_address sensor_type rdt_sampling_rate:=500 adc_sampling_rate:=976">
+    <xacro:macro name="net_ft_sensor_ros2_control" params="name prefix ip_address sensor_type rdt_sampling_rate:=500">
         <ros2_control name="${name}" type="sensor">
             <hardware>
                 <plugin>net_ft_driver/NetFTHardwareInterface</plugin>
                 <param name="sensor_type">${sensor_type}</param>
                 <param name="ip_address">${ip_address}</param>
                 <param name="rdt_sampling_rate">${rdt_sampling_rate}</param>
-                <param name="adc_sampling_rate">${adc_sampling_rate}</param>
             </hardware>
 
             <sensor name="${prefix}tcp_fts_sensor">

@@ -5,8 +5,7 @@
     parent 
     *origin 
     ip_address 
-    rdt_sampling_rate 
-    adc_sampling_rate">
+    rdt_sampling_rate">
 
     <joint name="${prefix}fts_joint" type="fixed">
       <!-- The parent link must be read from the robot model it is attached to. -->
@@ -47,7 +46,6 @@
       name="NetFTHardwareInterface" 
       sensor_type="ati_axia" 
       ip_address="${ip_address}" 
-      rdt_sampling_rate="${rdt_sampling_rate}" 
-      adc_sampling_rate="${adc_sampling_rate}" />
+      rdt_sampling_rate="${rdt_sampling_rate}"/>
   </xacro:macro>
 </robot>

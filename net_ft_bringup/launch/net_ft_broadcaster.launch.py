@@ -88,9 +88,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=[
-            "net_ft_diagnostic_broadcaster",
-            "-ccontroller-manager",
-            "/controller_manager",
+            "net_ft_diagnostic_broadcaster", "-c", "/controller_manager",
         ],
     )
 
