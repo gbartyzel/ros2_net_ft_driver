@@ -23,9 +23,28 @@ struct SensorData
   uint32_t status;
 };
 
+class NetFTInterface;
+
+class NetFTFactory
+{
+public:
+  NetFTFactory() {}
+  virtual std::unique_ptr<NetFTInterface> create(const std::string & ip_address) = 0;
+};
+
 class NetFTInterface
 {
 public:
+  static std::unique_ptr<NetFTInterface> create(const std::string & sensor_type, const std::string & ip_address)
+  {
+    return std::move(get_factory_instance()[sensor_type]->create(ip_address));
+  }
+
+  static void register_type(const std::string & sensor_type, NetFTFactory * factory)
+  {
+    get_factory_instance()[sensor_type] = factory;
+  }
+
   NetFTInterface(const std::string & ip_address, int max_sampling_freq_);
 
   NetFTInterface() = delete;
@@ -41,6 +60,12 @@ public:
   std::unique_ptr<SensorData> receive_data();
 
 protected:
+  static std::map<std::string, NetFTFactory *> & get_factory_instance()
+  {
+    static std::map<std::string, NetFTFactory *> map_instance;
+    return map_instance;
+  }
+
   template <typename T>
   bool set_cgi_variable(const std::string & cgi_name, const std::string & var_name, T value)
   {

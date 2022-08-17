@@ -4,11 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "net_ft_driver/interfaces/net_ft_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
-
-#include "net_ft_driver/interfaces/ati_axia_ft_intetface.hpp"
-#include "net_ft_driver/interfaces/ati_ft_intetface.hpp"
-#include "net_ft_driver/interfaces/onrobot_ft_intetface.hpp"
 
 const auto kLogger = rclcpp::get_logger("NetFTHardwareInerface");
 
@@ -31,18 +28,7 @@ hardware_interface::CallbackReturn NetFtHardwareInterface::on_init(const hardwar
   sensor_type_ = info_.hardware_parameters["sensor_type"];
   auto rdt_rate = std::stoi(info_.hardware_parameters["rdt_sampling_rate"]);
 
-  if (sensor_type_ == "ati")
-  {
-    driver_ = std::make_unique<AtiFTInterface>(ip_address_);
-  }
-  else if (sensor_type_ == "ati_axia")
-  {
-    driver_ = std::make_unique<AtiAxiaFTInterface>(ip_address_);
-  }
-  else if (sensor_type_ == "onrobot")
-  {
-    driver_ = std::make_unique<OnRobotFTInterface>(ip_address_);
-  }
+  driver_ = NetFTInterface::create(sensor_type_, ip_address_);
 
   if (!driver_->set_sampling_rate(rdt_rate))
   {
