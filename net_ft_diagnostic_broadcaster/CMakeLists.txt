@@ -25,15 +25,17 @@ add_library(
   SHARED
   src/net_ft_diagnostic_broadcaster.cpp
 )
-target_include_directories(${PROJECT_NAME}
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-      $<INSTALL_INTERFACE:include>)
+target_include_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    include
+) 
 ament_target_dependencies(
   ${PROJECT_NAME}
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE "FORCE_TORQUE_SENSOR_BROADCASTER_BUILDING_DLL")
-pluginlib_export_plugin_description_file(controller_interface net_ft_diagnostic_broadcaster.xml)
+pluginlib_export_plugin_description_file(controller_interface controller_plugins.xml)
 
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
@@ -45,7 +47,7 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
-install(FILES net_ft_diagnostic_broadcaster.xml
+install(FILES controller_plugins.xml
   DESTINATION share/${PROJECT_NAME}
 )
 

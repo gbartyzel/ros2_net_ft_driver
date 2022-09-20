@@ -7,7 +7,7 @@ namespace net_ft_diagnostic_broadcaster
 {
 NetFTDiagnosticBroadcaster::NetFTDiagnosticBroadcaster() {}
 
-controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_init()
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTDiagnosticBroadcaster::on_init()
 {
   try
   {
@@ -16,11 +16,11 @@ controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_init()
   catch (std::exception & e)
   {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
-    return controller_interface::CallbackReturn::ERROR;
+    return LifecycleNodeInterface::CallbackReturn::ERROR;
   }
   last_packet_count_ = 0;
   diagnostic_publisher_.reset();
-  return controller_interface::CallbackReturn::SUCCESS;
+  return LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::InterfaceConfiguration NetFTDiagnosticBroadcaster::command_interface_configuration() const
@@ -42,13 +42,13 @@ controller_interface::InterfaceConfiguration NetFTDiagnosticBroadcaster::state_i
   return config;
 }
 
-controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_configure(
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTDiagnosticBroadcaster::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   if (!get_node()->get_parameter("diagnostic_publish_rate", publish_rate_))
   {
     RCLCPP_INFO(get_node()->get_logger(), "Parameter 'diagnostic_publish_rate' not set");
-    return controller_interface::CallbackReturn::ERROR;
+    return LifecycleNodeInterface::CallbackReturn::ERROR;
   }
   else
   {
@@ -59,25 +59,22 @@ controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_configure(
   return LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_activate(
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTDiagnosticBroadcaster::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  return controller_interface::CallbackReturn::SUCCESS;
+  return LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_deactivate(
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTDiagnosticBroadcaster::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  return controller_interface::CallbackReturn::SUCCESS;
+  return LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::return_type NetFTDiagnosticBroadcaster::update(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
-  if (publish_rate_ > 0.0 && period > rclcpp::Duration(1.0 / publish_rate_, 0.0))
-  {
-    publish_diagnostic();
-  }
+  publish_diagnostic();
   return controller_interface::return_type::OK;
 }
 

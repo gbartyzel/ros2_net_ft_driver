@@ -60,13 +60,11 @@ std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_s
     }
   }
 
-  /*
   state_interfaces.emplace_back(hardware_interface::StateInterface("diagnostic", "packet_count", &packet_count_));
   state_interfaces.emplace_back(hardware_interface::StateInterface("diagnostic", "lost_packets", &lost_packets_));
   state_interfaces.emplace_back(
     hardware_interface::StateInterface("diagnostic", "out_of_order_count", &out_of_order_count_));
   state_interfaces.emplace_back(hardware_interface::StateInterface("diagnostic", "status", &status_));
-  */
   return state_interfaces;
 }
 

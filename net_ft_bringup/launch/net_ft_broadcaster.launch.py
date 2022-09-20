@@ -36,7 +36,7 @@ def generate_launch_description():
             " ",
             LaunchConfiguration("model"),
             " ",
-            "ip_address:=192.168.1.1",
+            "ip_address:=10.0.10.30",
         ]
     )
     robot_description_param = {
@@ -76,7 +76,6 @@ def generate_launch_description():
         ],
     )
 
-    """
     net_ft_diagnostic_broadcaster = launch_ros.actions.Node(
         package="controller_manager",
         executable="spawner",
@@ -84,13 +83,12 @@ def generate_launch_description():
             "net_ft_diagnostic_broadcaster", "-c", "/controller_manager",
         ],
     )
-    """
 
     nodes = [
         control_node,
         robot_state_publisher_node,
         force_torque_sensor_broadcaster_spawner,
-        # net_ft_diagnostic_broadcaster,
+        net_ft_diagnostic_broadcaster,
     ]
 
     return launch.LaunchDescription(args + nodes)

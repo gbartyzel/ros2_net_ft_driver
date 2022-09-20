@@ -5,6 +5,9 @@ controller_manager:
     force_torque_sensor_broadcaster:
       type: force_torque_sensor_broadcaster/ForceTorqueSensorBroadcaster
 
+    net_ft_diagnostic_broadcaster:
+      type: net_ft_diagnostic_broadcaster/NetFTDiagnosticBroadcaster
+
 force_torque_sensor_broadcaster:
   ros__parameters:
     sensor_name: tcp_fts_sensor
