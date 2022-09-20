@@ -13,10 +13,7 @@ const auto kLogger = rclcpp::get_logger("NetFtHardwareInerface");
 
 namespace net_ft_driver
 {
-NetFtHardwareInterface::NetFtHardwareInterface()
-{
-}
-
+NetFtHardwareInterface::NetFtHardwareInterface() {}
 
 CallbackReturn NetFtHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
 {
@@ -68,8 +65,7 @@ std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_s
   return state_interfaces;
 }
 
-CallbackReturn NetFtHardwareInterface::on_activate(
-  const rclcpp_lifecycle::State & /*previous_state*/)
+CallbackReturn NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
 {
   if (driver_->start_streaming())
   {
@@ -87,8 +83,7 @@ CallbackReturn NetFtHardwareInterface::on_activate(
   return CallbackReturn::ERROR;
 }
 
-CallbackReturn NetFtHardwareInterface::on_deactivate(
-  const rclcpp_lifecycle::State & /*previous_state*/)
+CallbackReturn NetFtHardwareInterface::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
 {
   if (driver_->stop_streaming())
   {
@@ -100,7 +95,6 @@ CallbackReturn NetFtHardwareInterface::on_deactivate(
 }
 
 hardware_interface::return_type NetFtHardwareInterface::read()
-  // const rclcpp::Time & /* time */, const rclcpp::Duration & /* period*/)
 {
   auto data = driver_->receive_data();
   if (data)
