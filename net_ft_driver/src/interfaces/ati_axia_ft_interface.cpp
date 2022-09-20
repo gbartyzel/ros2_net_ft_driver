@@ -17,9 +17,9 @@ bool AtiAxiaFTInterface::set_sampling_rate(int rate)
       break;
     }
   }
-  auto response = get_config("netftapi2.xml");
-  int current_rate = std::stoi(parse_config(response, "netFTApi", "setrate"));
-  rate = std::min(min_sampling_freq_, std::max(rate, current_rate));
-  return set_cgi_variable("comm.cgi", "commrdtrate", rate);
+  auto response = get_config("netftapi2.xml"); 
+  int current_rate = std::stoi(parse_config(response, "netft", "setrate"));
+  rate = std::max(min_sampling_freq_, std::min(rate, current_rate));
+  return set_cgi_variable("comm.cgi", "comrdtrate", rate);
 }
 }  // namespace net_ft_driver

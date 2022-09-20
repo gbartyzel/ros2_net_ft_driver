@@ -55,7 +55,7 @@ public:
 
   bool stop_streaming();
 
-  virtual bool set_sampling_rate(int rate);
+  virtual bool set_sampling_rate(int rate) = 0;
 
   std::unique_ptr<SensorData> receive_data();
 

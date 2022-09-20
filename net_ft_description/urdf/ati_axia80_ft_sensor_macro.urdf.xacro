@@ -43,8 +43,8 @@
 
     <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor.ros2_control.xacro" />
     <xacro:net_ft_sensor_ros2_control 
-      name="NetFTHardwareInterface" 
-      sensor_type="ati_axia" 
+      name="NetFtHardwareInterface" 
+      sensor_type="onrobot" 
       ip_address="${ip_address}" 
       rdt_sampling_rate="${rdt_sampling_rate}"/>
   </xacro:macro>

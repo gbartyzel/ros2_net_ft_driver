@@ -39,20 +39,20 @@ add_library(
 )
 target_include_directories(
   ${PROJECT_NAME}
-  PUBLIC 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
+  PRIVATE 
+  include
 )
 ament_target_dependencies(
   ${PROJECT_NAME}
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
-pluginlib_export_plugin_description_file(hardware_interface net_ft_driver_plugin.xml)
+pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
 
 install(
   TARGETS ${PROJECT_NAME}
   DESTINATION lib
 )
+
 install(
   DIRECTORY include/
   DESTINATION include
@@ -69,8 +69,14 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
+ament_export_include_directories(
+  include
+)
+ament_export_libraries(
+  ${PROJECT_NAME}
+)
+ament_export_dependencies(
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+)
 
 ament_package()

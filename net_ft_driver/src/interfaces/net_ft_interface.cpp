@@ -58,7 +58,7 @@ std::unique_ptr<SensorData> NetFTInterface::receive_data()
 {
   uint8_t buffer[kRecordSize + 1];
   size_t len = socket_.receive(asio::buffer(buffer, kRecordSize + 1));
-  if (len != kRecordSize + 1)
+  if (len != kRecordSize)
   {
     return nullptr;
   }

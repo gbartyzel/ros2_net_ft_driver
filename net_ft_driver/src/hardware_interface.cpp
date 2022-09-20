@@ -4,14 +4,21 @@
 #include <string>
 #include <vector>
 
+#include "hardware_interface/sensor_interface.hpp"
+#include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "net_ft_driver/interfaces/net_ft_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-const auto kLogger = rclcpp::get_logger("NetFTHardwareInerface");
+const auto kLogger = rclcpp::get_logger("NetFtHardwareInerface");
 
 namespace net_ft_driver
 {
-hardware_interface::CallbackReturn NetFtHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
+NetFtHardwareInterface::NetFtHardwareInterface()
+{
+}
+
+
+CallbackReturn NetFtHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
 {
   if (hardware_interface::SensorInterface::on_init(info) != CallbackReturn::SUCCESS)
   {
@@ -26,7 +33,7 @@ hardware_interface::CallbackReturn NetFtHardwareInterface::on_init(const hardwar
 
   ip_address_ = info_.hardware_parameters["ip_address"];
   sensor_type_ = info_.hardware_parameters["sensor_type"];
-  auto rdt_rate = std::stoi(info_.hardware_parameters["rdt_sampling_rate"]);
+  int rdt_rate = std::stoi(info_.hardware_parameters["rdt_sampling_rate"]);
 
   driver_ = NetFTInterface::create(sensor_type_, ip_address_);
 
@@ -36,6 +43,7 @@ hardware_interface::CallbackReturn NetFtHardwareInterface::on_init(const hardwar
     return CallbackReturn::ERROR;
   }
 
+  RCLCPP_INFO(kLogger, "Initialize connection with F/T Sensor");
   return CallbackReturn::SUCCESS;
 }
 
@@ -52,15 +60,17 @@ std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_s
     }
   }
 
+  /*
   state_interfaces.emplace_back(hardware_interface::StateInterface("diagnostic", "packet_count", &packet_count_));
   state_interfaces.emplace_back(hardware_interface::StateInterface("diagnostic", "lost_packets", &lost_packets_));
   state_interfaces.emplace_back(
     hardware_interface::StateInterface("diagnostic", "out_of_order_count", &out_of_order_count_));
   state_interfaces.emplace_back(hardware_interface::StateInterface("diagnostic", "status", &status_));
+  */
   return state_interfaces;
 }
 
-hardware_interface::CallbackReturn NetFtHardwareInterface::on_activate(
+CallbackReturn NetFtHardwareInterface::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   if (driver_->start_streaming())
@@ -79,7 +89,7 @@ hardware_interface::CallbackReturn NetFtHardwareInterface::on_activate(
   return CallbackReturn::ERROR;
 }
 
-hardware_interface::CallbackReturn NetFtHardwareInterface::on_deactivate(
+CallbackReturn NetFtHardwareInterface::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   if (driver_->stop_streaming())
@@ -91,8 +101,8 @@ hardware_interface::CallbackReturn NetFtHardwareInterface::on_deactivate(
   return CallbackReturn::ERROR;
 }
 
-hardware_interface::return_type NetFtHardwareInterface::read(
-  const rclcpp::Time & /* time */, const rclcpp::Duration & /* period*/)
+hardware_interface::return_type NetFtHardwareInterface::read()
+  // const rclcpp::Time & /* time */, const rclcpp::Duration & /* period*/)
 {
   auto data = driver_->receive_data();
   if (data)

@@ -14,12 +14,12 @@ def generate_launch_description():
         package="net_ft_description"
     ).find("net_ft_description")
     default_model_path = os.path.join(
-        description_pkg_share, "urdf", "net_ft_sensor.urdf.xacro"
+        description_pkg_share, "urdf", "ati_axia80_ft_sensor.urdf.xacro"
     )
 
     pkg_share = launch_ros.substitutions.FindPackageShare(
-        package="net_ft_driver"
-    ).find("net_ft_driver")
+        package="net_ft_driver_bringup"
+    ).find("net_ft_driver_bringup")
 
     args = []
     args.append(
@@ -36,7 +36,7 @@ def generate_launch_description():
             " ",
             LaunchConfiguration("model"),
             " ",
-            "use_sim:=false",
+            "ip_address:=192.168.1.1",
         ]
     )
     robot_description_param = {
@@ -45,26 +45,18 @@ def generate_launch_description():
         )
     }
 
-    update_rate_config_file = PathJoinSubstitution(
-        [
-            pkg_share,
-            "config",
-            "ati_axia80_update_rate.yaml",
-        ]
-    )
-
     controllers_file = "ati_axia80_broadcaster.yaml"
-    initial_joint_controllers = PathJoinSubstitution(
+    ft_controller = PathJoinSubstitution(
         [pkg_share, "config", controllers_file]
     )
+
 
     control_node = launch_ros.actions.Node(
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[
             robot_description_param,
-            update_rate_config_file,
-            initial_joint_controllers,
+            ft_controller,
         ],
     )
 
@@ -84,6 +76,7 @@ def generate_launch_description():
         ],
     )
 
+    """
     net_ft_diagnostic_broadcaster = launch_ros.actions.Node(
         package="controller_manager",
         executable="spawner",
@@ -91,12 +84,13 @@ def generate_launch_description():
             "net_ft_diagnostic_broadcaster", "-c", "/controller_manager",
         ],
     )
+    """
 
     nodes = [
         control_node,
         robot_state_publisher_node,
         force_torque_sensor_broadcaster_spawner,
-        net_ft_diagnostic_broadcaster,
+        # net_ft_diagnostic_broadcaster,
     ]
 
     return launch.LaunchDescription(args + nodes)

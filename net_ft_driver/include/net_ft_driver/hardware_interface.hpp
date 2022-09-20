@@ -8,6 +8,9 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "hardware_interface/sensor_interface.hpp"
+#include "hardware_interface/handle.hpp"
+#include "hardware_interface/hardware_info.hpp"
+#include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 
 #include "net_ft_driver/interfaces/net_ft_interface.hpp"
@@ -36,7 +39,7 @@ public:
   CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
 
   NET_FT_DRIVER_PUBLIC
-  hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
+  hardware_interface::return_type read() override; //const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 private:
   Vector6D apply_offset(Vector6D raw_values);
