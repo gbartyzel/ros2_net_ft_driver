@@ -20,15 +20,13 @@ Installing dependencies:
 sudo apt update
 sudo apt dist-upgrade
 rosdep update
-cd src
-git clone --branch galactic https://github.com/gbartyzel/ros2_net_ft_driver.git
+git -C src clone --branch galactic https://github.com/gbartyzel/ros2_net_ft_driver.git
 sudo apt install -y libasio-dev libcurlpp-dev
-rosdep install -r --from-paths . --ignore-src --rosdistro $ROS_DISTRO -y
+rosdep install --ignore-src --from-paths src -y -r --rosdistro $ROS_DISTRO
 ```
 
 Build the package:
 ```
-cd <COLCON_WORKSPACE>
 colcon build --symlink-install
 ource install/local_setup.sh
 ```
