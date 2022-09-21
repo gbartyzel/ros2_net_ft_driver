@@ -10,15 +10,7 @@ from launch.substitutions import (
 from launch_ros.substitutions import FindPackageShare
 
 
-def launch_setup():
-    description_pkg_share = launch_ros.substitutions.FindPackageShare(
-        package="net_ft_description"
-    ).find("net_ft_description")
-
-    pkg_share = launch_ros.substitutions.FindPackageShare(
-        package="net_ft_driver_bringup"
-    ).find("net_ft_driver")
-
+def launch_setup(context, *args, **kwargs):
     ip_address = LaunchConfiguration("ip_address")
     rdt_sampling_rate = LaunchConfiguration("rdt_sampling_rate")
     sensor_type = LaunchConfiguration("sensor_type")
@@ -29,7 +21,7 @@ def launch_setup():
             " ",
             PathJoinSubstitution(
                 [
-                    FindPackageShare(description_pkg_share),
+                    FindPackageShare("net_ft_description"),
                     "urdf",
                     "net_ft_sensor.urdf.xacro",
                 ]
@@ -40,23 +32,22 @@ def launch_setup():
             " ",
             "rdt_sampling_rate:=",
             rdt_sampling_rate,
-            " " "sensor_type:=",
+            " ",
+            "sensor_type:=",
             sensor_type,
             " ",
         ]
     )
     robot_description_param = {"robot_description": robot_description_content}
 
-    controllers_file = "net_ft_broadcaster.yaml"
-    ft_controller = PathJoinSubstitution([pkg_share, "config", controllers_file])
+    ft_controller = PathJoinSubstitution(
+        [FindPackageShare("net_ft_driver"), "config", "net_ft_broadcaster.yaml"]
+    )
 
     control_node = launch_ros.actions.Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[
-            robot_description_param,
-            ft_controller,
-        ],
+        parameters=[robot_description_param, ft_controller],
     )
 
     robot_state_publisher_node = launch_ros.actions.Node(

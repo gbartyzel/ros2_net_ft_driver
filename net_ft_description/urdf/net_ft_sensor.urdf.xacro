@@ -1,19 +1,18 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://wiki.ros.org/xacro" name="a/ati_axia80_ft_sensor">
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="net_ft_sensor">
     <!-- parameters -->
     <xacro:arg name="ip_address" default="192.168.1.1" />
     <xacro:arg name="rdt_sampling_rate" default="500" />
     <xacro:arg name="sensor_type" default="ati_axia80" />
 
     <link name="world" />
-    <xacro:if value="${sensor_type == 'ati_axia80'}">
-      <xacro:include filename="$(find net_ft_description)/urdf/ati_axia80_ft_sensor_macro.urdf.xacro" />
-      <xacro:ati_axia80_ft_sensor 
-        parent="world" 
-        prefix=""
-        ip_address="$(arg ip_address)"
-        rdt_sampling_rate="$(arg rdt_sampling_rate)">
-          <origin xyz="0 0 0" rpy="0 0 0" />
-      </xacro:ati_axia80_ft_sensor>
-    </xacro:if>
+    <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor_macro.urdf.xacro" />
+    <xacro:net_ft_sensor 
+      parent="world" 
+      prefix=""
+      ip_address="$(arg ip_address)"
+      rdt_sampling_rate="$(arg rdt_sampling_rate)"
+      sensor_type="$(arg sensor_type)">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:net_ft_sensor>
 </robot>
