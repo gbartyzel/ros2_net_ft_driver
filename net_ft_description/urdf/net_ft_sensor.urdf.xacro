@@ -7,8 +7,8 @@
 
     <link name="world" />
     <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor_macro.urdf.xacro" />
-    <xacro:net_ft_sensor 
-      parent="world" 
+    <xacro:net_ft_sensor
+      parent="world"
       prefix=""
       ip_address="$(arg ip_address)"
       rdt_sampling_rate="$(arg rdt_sampling_rate)"

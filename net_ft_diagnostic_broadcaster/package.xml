@@ -3,9 +3,13 @@
 <package format="3">
   <name>net_ft_diagnostic_broadcaster</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="gbartyzel@hotmail.com">souphis</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Provides broadcaster for diagnostic data of the F/T sensor</description>
+
+  <maintainer email="gbartyzel@hotmail.com">Grzegorz Bartyzel</maintainer>
+
+  <license>BSD</license>
+
+  <author>Grzegorz Bartyzel</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

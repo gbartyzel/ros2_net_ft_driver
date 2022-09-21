@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="ati_axia80_ft_sensor" params="
-    prefix 
-    parent 
-    *origin 
-    ip_address 
+    prefix
+    parent
+    *origin
+    ip_address
     rdt_sampling_rate">
 
     <joint name="${prefix}fts_joint" type="fixed">
@@ -41,10 +41,10 @@
     <link name="${prefix}tool_mount_link"/>
 
     <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor.ros2_control.xacro" />
-    <xacro:net_ft_sensor_ros2_control 
-      name="NetFtHardwareInterface" 
-      sensor_type="ati_axia" 
-      ip_address="${ip_address}" 
+    <xacro:net_ft_sensor_ros2_control
+      name="NetFtHardwareInterface"
+      sensor_type="ati_axia"
+      ip_address="${ip_address}"
       rdt_sampling_rate="${rdt_sampling_rate}"/>
   </xacro:macro>
 </robot>

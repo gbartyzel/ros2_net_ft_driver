@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="net_ft_sensor" params="
-    prefix 
-    parent 
-    *origin 
-    ip_address 
+    prefix
+    parent
+    *origin
+    ip_address
     rdt_sampling_rate
     sensor_type">
 
@@ -12,7 +12,7 @@
       <inertial>
         <mass value="${mass}" />
         <xacro:insert_block name="origin" />
-        <inertia ixx="${0.0833333 * mass * (3 * radius * radius + length * length)}" ixy="0.0" ixz="0.0" 
+        <inertia ixx="${0.0833333 * mass * (3 * radius * radius + length * length)}" ixy="0.0" ixz="0.0"
           iyy="${0.0833333 * mass * (3 * radius * radius + length * length)}" iyz="0.0"
           izz="${0.5 * mass * radius * radius}" />
       </inertial>
@@ -64,10 +64,10 @@
     <link name="${prefix}tool_mount_link"/>
 
     <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor.ros2_control.xacro" />
-    <xacro:net_ft_sensor_ros2_control 
-      name="NetFtHardwareInterface" 
-      sensor_type="${sensor_type}" 
-      ip_address="${ip_address}" 
+    <xacro:net_ft_sensor_ros2_control
+      name="NetFtHardwareInterface"
+      sensor_type="${sensor_type}"
+      ip_address="${ip_address}"
       rdt_sampling_rate="${rdt_sampling_rate}"/>
   </xacro:macro>
 </robot>

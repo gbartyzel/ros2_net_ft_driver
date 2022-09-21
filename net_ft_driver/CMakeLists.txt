@@ -8,7 +8,7 @@ endif()
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   ament_cmake
   ASIO
-  CURLPP 
+  CURLPP
   hardware_interface
   pluginlib
   rclcpp
@@ -39,7 +39,7 @@ add_library(
 )
 target_include_directories(
   ${PROJECT_NAME}
-  PRIVATE 
+  PRIVATE
   include
 )
 ament_target_dependencies(
