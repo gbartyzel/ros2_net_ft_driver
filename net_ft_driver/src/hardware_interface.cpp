@@ -43,11 +43,11 @@ namespace net_ft_driver
 {
 NetFtHardwareInterface::NetFtHardwareInterface() {}
 
-CallbackReturn NetFtHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
+hardware_interface::CallbackReturn NetFtHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
 {
   if (hardware_interface::SensorInterface::on_init(info) != CallbackReturn::SUCCESS)
   {
-    return CallbackReturn::ERROR;
+    return hardware_interface::CallbackReturn::ERROR;
   }
 
   ft_sensor_measurements_ = {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
@@ -65,11 +65,11 @@ CallbackReturn NetFtHardwareInterface::on_init(const hardware_interface::Hardwar
   if (!driver_->set_sampling_rate(rdt_rate))
   {
     RCLCPP_FATAL(kLogger, "Couldn't set RDT sampling rate of the F/T Sensor");
-    return CallbackReturn::ERROR;
+    return hardware_interface::CallbackReturn::ERROR;
   }
 
   RCLCPP_INFO(kLogger, "Initialize connection with F/T Sensor");
-  return CallbackReturn::SUCCESS;
+  return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_state_interfaces()
@@ -93,7 +93,8 @@ std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_s
   return state_interfaces;
 }
 
-CallbackReturn NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+hardware_interface::CallbackReturn NetFtHardwareInterface::on_activate(
+  const rclcpp_lifecycle::State & /*previous_state*/)
 {
   if (driver_->start_streaming())
   {
@@ -104,25 +105,27 @@ CallbackReturn NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State
       ft_sensor_measurements_ = apply_offset(data->ft_values);
 
       RCLCPP_INFO(kLogger, "Successfully started data streaming!");
-      return CallbackReturn::SUCCESS;
+      return hardware_interface::CallbackReturn::SUCCESS;
     }
   }
   RCLCPP_FATAL(kLogger, "The data stream could not be started!");
-  return CallbackReturn::ERROR;
+  return hardware_interface::CallbackReturn::ERROR;
 }
 
-CallbackReturn NetFtHardwareInterface::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+hardware_interface::CallbackReturn NetFtHardwareInterface::on_deactivate(
+  const rclcpp_lifecycle::State & /*previous_state*/)
 {
   if (driver_->stop_streaming())
   {
     RCLCPP_INFO(kLogger, "Successfully stoped data streaming!");
-    return CallbackReturn::SUCCESS;
+    return hardware_interface::CallbackReturn::SUCCESS;
   }
   RCLCPP_FATAL(kLogger, "The data stream could not be stopped!");
-  return CallbackReturn::ERROR;
+  return hardware_interface::CallbackReturn::ERROR;
 }
 
-hardware_interface::return_type NetFtHardwareInterface::read()
+hardware_interface::return_type NetFtHardwareInterface::read(
+  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   auto data = driver_->receive_data();
   if (data)

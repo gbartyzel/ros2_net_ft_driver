@@ -7,7 +7,7 @@ namespace net_ft_diagnostic_broadcaster
 {
 NetFTDiagnosticBroadcaster::NetFTDiagnosticBroadcaster() {}
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTDiagnosticBroadcaster::on_init()
+controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_init()
 {
   try
   {
@@ -16,11 +16,11 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTD
   catch (std::exception & e)
   {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
-    return LifecycleNodeInterface::CallbackReturn::ERROR;
+    return controller_interface::CallbackReturn::ERROR;
   }
   last_packet_count_ = 0;
   diagnostic_publisher_.reset();
-  return LifecycleNodeInterface::CallbackReturn::SUCCESS;
+  return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::InterfaceConfiguration NetFTDiagnosticBroadcaster::command_interface_configuration() const
@@ -42,7 +42,7 @@ controller_interface::InterfaceConfiguration NetFTDiagnosticBroadcaster::state_i
   return config;
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTDiagnosticBroadcaster::on_configure(
+controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   if (!get_node()->get_parameter("diagnostic_publish_rate", publish_rate_))
@@ -56,7 +56,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTD
   }
   diagnostic_publisher_ = get_node()->create_publisher<diagnostic_msgs::msg::DiagnosticArray>(
     "~/net_ft_diagnostic", rclcpp::SystemDefaultsQoS());
-  return LifecycleNodeInterface::CallbackReturn::SUCCESS;
+  return controller_interface::CallbackReturn::SUCCESS;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTDiagnosticBroadcaster::on_activate(
@@ -72,7 +72,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn NetFTD
 }
 
 controller_interface::return_type NetFTDiagnosticBroadcaster::update(
-  const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
+  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   publish_diagnostic();
   return controller_interface::return_type::OK;
