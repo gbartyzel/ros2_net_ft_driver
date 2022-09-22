@@ -27,12 +27,15 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <algorithm>
+#include <string>
 
-#include "net_ft_driver/interfaces/ati_ft_intetface.hpp"
+#include "net_ft_driver/interfaces/ati_ft_interface.hpp"
 
 namespace net_ft_driver
 {
-AtiFTInterface::AtiFTInterface(const std::string & ip_address) : NetFTInterface(ip_address, 7000) {}
+AtiFTInterface::AtiFTInterface(const std::string& ip_address) : NetFTInterface(ip_address, 7000)
+{
+}
 
 bool AtiFTInterface::set_sampling_rate(int rate)
 {

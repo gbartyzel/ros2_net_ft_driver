@@ -26,17 +26,20 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef NET_FT_DRIVER_INTERFACES__NET_FT_INTERFACE_HPP_
-#define NET_FT_DRIVER_INTERFACES__NET_FT_INTERFACE_HPP_
+#ifndef NET_FT_DRIVER__INTERFACES__NET_FT_INTERFACE_HPP_
+#define NET_FT_DRIVER__INTERFACES__NET_FT_INTERFACE_HPP_
 
-#include <array>
 #include <asio.hpp>
-#include <cstdlib>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 #include <curlpp/cURLpp.hpp>
+
+#include <array>
+#include <cstdlib>
 #include <memory>
+#include <map>
 #include <string>
+#include <utility>
 
 namespace net_ft_driver
 {
@@ -56,24 +59,26 @@ class NetFTInterface;
 class NetFTFactory
 {
 public:
-  NetFTFactory() {}
-  virtual std::unique_ptr<NetFTInterface> create(const std::string & ip_address) = 0;
+  NetFTFactory()
+  {
+  }
+  virtual std::unique_ptr<NetFTInterface> create(const std::string& ip_address) = 0;
 };
 
 class NetFTInterface
 {
 public:
-  static std::unique_ptr<NetFTInterface> create(const std::string & sensor_type, const std::string & ip_address)
+  static std::unique_ptr<NetFTInterface> create(const std::string& sensor_type, const std::string& ip_address)
   {
     return std::move(get_factory_instance()[sensor_type]->create(ip_address));
   }
 
-  static void register_type(const std::string & sensor_type, NetFTFactory * factory)
+  static void register_type(const std::string& sensor_type, NetFTFactory* factory)
   {
     get_factory_instance()[sensor_type] = factory;
   }
 
-  NetFTInterface(const std::string & ip_address, int max_sampling_freq_);
+  explicit NetFTInterface(const std::string& ip_address, int max_sampling_freq_);
 
   NetFTInterface() = delete;
 
@@ -88,30 +93,25 @@ public:
   std::unique_ptr<SensorData> receive_data();
 
 protected:
-  static std::map<std::string, NetFTFactory *> & get_factory_instance()
+  static std::map<std::string, NetFTFactory*>& get_factory_instance()
   {
-    static std::map<std::string, NetFTFactory *> map_instance;
+    static std::map<std::string, NetFTFactory*> map_instance;
     return map_instance;
   }
 
   template <typename T>
-  bool set_cgi_variable(const std::string & cgi_name, const std::string & var_name, T value)
+  bool set_cgi_variable(const std::string& cgi_name, const std::string& var_name, T value)
   {
-    try
-    {
+    try {
       curlpp::Cleanup cleanup;
       curlpp::Easy request;
-      std::string xml_url{"http://" + ip_address_ + "/" + cgi_name + "?" + var_name + "&" + std::to_string(value)};
+      std::string xml_url{ "http://" + ip_address_ + "/" + cgi_name + "?" + var_name + "&" + std::to_string(value) };
       request.setOpt(new curlpp::options::Url(xml_url));
       request.perform();
       return true;
-    }
-    catch (curlpp::RuntimeError & e)
-    {
+    } catch (curlpp::RuntimeError& e) {
       std::cerr << e.what() << std::endl;
-    }
-    catch (curlpp::LogicError & e)
-    {
+    } catch (curlpp::LogicError& e) {
       std::cerr << e.what() << std::endl;
     }
     return false;
@@ -119,17 +119,17 @@ protected:
 
   bool send_command(uint32_t command, uint32_t sample_count);
 
-  std::string get_config(const std::string & xml_name);
+  std::string get_config(const std::string& xml_name);
 
-  std::string parse_config(const std::string & response, const std::string & root, const std::string & var_name);
+  std::string parse_config(const std::string& response, const std::string& root, const std::string& var_name);
 
-  void unpack(const uint8_t * buffer);
+  void unpack(uint8_t* buffer);
 
   int min_sampling_freq_;
   int max_sampling_freq_;
 
 private:
-  void pack(uint8_t * buffer, uint32_t command, uint32_t sample_count) const;
+  void pack(uint8_t* buffer, uint32_t command, uint32_t sample_count) const;
 
   asio::io_service io_service_;
   asio::ip::udp::socket socket_;
@@ -152,4 +152,4 @@ private:
 };
 }  // namespace net_ft_driver
 
-#endif  //NET_FT_DRIVER_INTERFACES__NET_FT_INTERFACE_HPP_
+#endif  // NET_FT_DRIVER__INTERFACES__NET_FT_INTERFACE_HPP_

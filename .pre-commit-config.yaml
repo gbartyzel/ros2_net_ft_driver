@@ -26,6 +26,28 @@ repos:
 
   - repo: local
     hooks:
+      - id: ament_cppcheck
+        name: ament_cppcheck
+        description: Static code analysis of C/C++ files.
+        stages: [commit]
+        entry: ament_cppcheck
+        language: system
+        files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
+
+  # Maybe use https://github.com/cpplint/cpplint instead
+  - repo: local
+    hooks:
+      - id: ament_cpplint
+        name: ament_cpplint
+        description: Static code analysis of C/C++ files.
+        stages: [commit]
+        entry: ament_cpplint
+        language: system
+        files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
+        args: ["--linelength=120"]
+
+  - repo: local
+    hooks:
       - id: clang-format
         name: clang-format
         description: Format files with ClangFormat.

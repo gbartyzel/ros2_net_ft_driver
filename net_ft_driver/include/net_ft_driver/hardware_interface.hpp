@@ -31,6 +31,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "rclcpp/macros.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -55,16 +56,16 @@ public:
   NetFtHardwareInterface();
 
   NET_FT_DRIVER_PUBLIC
-  CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
+  CallbackReturn on_init(const hardware_interface::HardwareInfo& info) override;
 
   NET_FT_DRIVER_PUBLIC
   std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
   NET_FT_DRIVER_PUBLIC
-  CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
+  CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
 
   NET_FT_DRIVER_PUBLIC
-  CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
+  CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
 
   NET_FT_DRIVER_PUBLIC
   hardware_interface::return_type read() override;

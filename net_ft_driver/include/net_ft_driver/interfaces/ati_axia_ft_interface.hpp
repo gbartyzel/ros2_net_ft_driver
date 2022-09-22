@@ -26,34 +26,40 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef NET_FT_DRIVER_INTERFACES__ONROBOT_FT_INTERFACE_HPP_
-#define NET_FT_DRIVER_INTERFACES__ONROBOT_FT_INTERFACE_HPP_
+#ifndef NET_FT_DRIVER__INTERFACES__ATI_AXIA_FT_INTERFACE_HPP_
+#define NET_FT_DRIVER__INTERFACES__ATI_AXIA_FT_INTERFACE_HPP_
 
 #include <memory>
+#include <string>
+
 #include "net_ft_driver/interfaces/net_ft_interface.hpp"
 
 namespace net_ft_driver
 {
-class OnRobotFTInterface : public NetFTInterface
+class AtiAxiaFTInterface : public NetFTInterface
 {
 public:
-  OnRobotFTInterface(const std::string & ip_address);
+  explicit AtiAxiaFTInterface(const std::string& ip_address);
 
-  OnRobotFTInterface() = delete;
+  AtiAxiaFTInterface() = delete;
 
   bool set_sampling_rate(int rate);
 };
 
-class OnRobotFTFactory : public NetFTFactory
+class AtiAxiaFTFactory : public NetFTFactory
 {
 public:
-  OnRobotFTFactory() { NetFTInterface::register_type("onrobot", this); }
-  std::unique_ptr<NetFTInterface> create(const std::string & ip_address)
+  AtiAxiaFTFactory()
   {
-    return std::unique_ptr<OnRobotFTInterface>(new OnRobotFTInterface(ip_address));
+    NetFTInterface::register_type("ati_axia", this);
+  }
+  std::unique_ptr<NetFTInterface> create(const std::string& ip_address)
+  {
+    return std::unique_ptr<AtiAxiaFTInterface>(new AtiAxiaFTInterface(ip_address));
   }
 };
 
-static OnRobotFTFactory onrobot_factory;
+static AtiAxiaFTFactory ati_axia_factory;
 }  // namespace net_ft_driver
-#endif  //NET_FT_DRIVER_INTERFACES__ONROBOT_FT_INTERFACE_HPP_
+
+#endif  // NET_FT_DRIVER__INTERFACES__ATI_AXIA_FT_INTERFACE_HPP_
