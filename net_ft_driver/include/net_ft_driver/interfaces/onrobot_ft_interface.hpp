@@ -26,8 +26,8 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef NET_FT_DRIVER_INTERFACES__ATI_FT_INTERFACE_HPP_
-#define NET_FT_DRIVER_INTERFACES__ATI_FT_INTERFACE_HPP_
+#ifndef NET_FT_DRIVER__INTERFACES__ONROBOT_FT_INTERFACE_HPP_
+#define NET_FT_DRIVER__INTERFACES__ONROBOT_FT_INTERFACE_HPP_
 
 #include <memory>
 #include <string>
@@ -36,28 +36,29 @@
 
 namespace net_ft_driver
 {
-class AtiFTInterface : public NetFTInterface
+class OnRobotFTInterface : public NetFTInterface
 {
 public:
-  AtiFTInterface(const std::string & ip_address);
+  explicit OnRobotFTInterface(const std::string& ip_address);
 
-  AtiFTInterface() = delete;
+  OnRobotFTInterface() = delete;
 
-  bool set_sampling_rate(int rate) final;
+  bool set_sampling_rate(int rate);
 };
 
-class AtiFTFactory : public NetFTFactory
+class OnRobotFTFactory : public NetFTFactory
 {
 public:
-  AtiFTFactory() { NetFTInterface::register_type("ati", this); }
-  std::unique_ptr<NetFTInterface> create(const std::string & ip_address)
+  OnRobotFTFactory()
   {
-    return std::unique_ptr<AtiFTInterface>(new AtiFTInterface(ip_address));
+    NetFTInterface::register_type("onrobot", this);
+  }
+  std::unique_ptr<NetFTInterface> create(const std::string& ip_address)
+  {
+    return std::unique_ptr<OnRobotFTInterface>(new OnRobotFTInterface(ip_address));
   }
 };
 
-static AtiFTFactory ati_factory;
-
+static OnRobotFTFactory onrobot_factory;
 }  // namespace net_ft_driver
-
-#endif  // NET_FT_DRIVER_INTERFACES__ATI_FT_INTERFACE_HPP_
+#endif  // NET_FT_DRIVER__INTERFACES__ONROBOT_FT_INTERFACE_HPP_

@@ -27,14 +27,17 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <algorithm>
+#include <string>
 
-#include "net_ft_driver/interfaces/onrobot_ft_intetface.hpp"
+#include "net_ft_driver/interfaces/onrobot_ft_interface.hpp"
 
 constexpr uint32_t kSetSamplingRate = 0x0082;
 
 namespace net_ft_driver
 {
-OnRobotFTInterface::OnRobotFTInterface(const std::string & ip_address) : NetFTInterface(ip_address, 1000) {}
+OnRobotFTInterface::OnRobotFTInterface(const std::string& ip_address) : NetFTInterface(ip_address, 1000)
+{
+}
 
 bool OnRobotFTInterface::set_sampling_rate(int rate)
 {
