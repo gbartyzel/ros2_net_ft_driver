@@ -74,7 +74,7 @@ NetFTDiagnosticBroadcaster::on_configure(const rclcpp_lifecycle::State& /*previo
 {
   if (!get_node()->get_parameter("diagnostic_publish_rate", publish_rate_)) {
     RCLCPP_INFO(get_node()->get_logger(), "Parameter 'diagnostic_publish_rate' not set");
-    return LifecycleNodeInterface::CallbackReturn::ERROR;
+    return controller_interface::CallbackReturn::ERROR;
   } else {
     RCLCPP_INFO(get_node()->get_logger(), "Publisher rate set to : %.1f Hz", publish_rate_);
   }
@@ -83,16 +83,16 @@ NetFTDiagnosticBroadcaster::on_configure(const rclcpp_lifecycle::State& /*previo
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+controller_interface::CallbackReturn
 NetFTDiagnosticBroadcaster::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
-  return LifecycleNodeInterface::CallbackReturn::SUCCESS;
+  return controller_interface::CallbackReturn::SUCCESS;
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+controller_interface::CallbackReturn
 NetFTDiagnosticBroadcaster::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
-  return LifecycleNodeInterface::CallbackReturn::SUCCESS;
+  return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::return_type NetFTDiagnosticBroadcaster::update(const rclcpp::Time& /*time*/,
