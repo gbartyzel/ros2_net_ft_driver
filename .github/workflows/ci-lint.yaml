@@ -1,0 +1,62 @@
+name: Lint
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - rolling
+
+jobs:
+  ament_lint:
+    name: ament_${{ matrix.linter }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+          linter: [cppcheck, lint_cmake]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ros-tooling/setup-ros@v0.2
+      - uses: ros-tooling/action-ros-lint@v0.1
+        with:
+          distribution: rolling
+          linter: ${{ matrix.linter }}
+          package-name:
+            net_ft_driver
+            net_ft_diagnostic_broadcaster
+
+  ament_copyright:
+    name: ament_copyright
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ros-tooling/setup-ros@v0.2
+      - uses: ros-tooling/action-ros-lint@v0.1
+        with:
+          distribution: rolling
+          linter: copyright
+          package-name:
+            net_ft_driver
+            net_ft_diagnostic_broadcaster
+            net_ft_description
+
+  ament_lint_120:
+    name: ament_${{ matrix.linter }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+          linter: [cpplint]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ros-tooling/setup-ros@v0.2
+      - uses: ros-tooling/action-ros-lint@v0.1
+        with:
+          distribution: rolling
+          linter: cpplint
+          arguments: "--linelength=120"
+          package-name:
+            net_ft_driver
+            net_ft_diagnostic_broadcaster
