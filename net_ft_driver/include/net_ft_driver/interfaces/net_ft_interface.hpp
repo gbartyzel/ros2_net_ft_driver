@@ -29,17 +29,17 @@
 #ifndef NET_FT_DRIVER__INTERFACES__NET_FT_INTERFACE_HPP_
 #define NET_FT_DRIVER__INTERFACES__NET_FT_INTERFACE_HPP_
 
-#include <asio.hpp>
-#include <curlpp/Easy.hpp>
-#include <curlpp/Options.hpp>
-#include <curlpp/cURLpp.hpp>
-
 #include <array>
 #include <cstdlib>
 #include <memory>
 #include <map>
 #include <string>
 #include <utility>
+
+#include "asio.hpp"
+#include "curlpp/Easy.hpp"
+#include "curlpp/Options.hpp"
+#include "curlpp/cURLpp.hpp"
 
 namespace net_ft_driver
 {
