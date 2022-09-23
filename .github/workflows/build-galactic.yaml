@@ -13,23 +13,22 @@ on:
 
 jobs:
   industrial_ci:
+    name: galactic-main
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         env:
           - ROS_DISTRO: galactic
             ROS_REPO: main
     env:
-      BEFORE_INIT: 'sudo sudo apt-get -qq install -y --no-upgrade --no-install-recommends pkg-config libasio-dev libcurlpp-dev'
-      TARGET_CMAKE_ARGS: >
-        -DCMAKE_BUILD_TYPE='Release'
+      BEFORE_INSTALL_TARGET_DEPENDENCIES: 'sudo apt-get -qq update && sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev'
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       BASEDIR: ${{ github.workspace }}/.work
-      CACHE_PREFIX: ${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
-
-    name: "${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}"
-    runs-on: ubuntu-latest
+      CACHE_PREFIX: galactic-main
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: galactic
       # The target directory cache doesn't include the source directory because
       # that comes from the checkout.  See "prepare target_ws for cache" task below
       - name: cache target_ws
