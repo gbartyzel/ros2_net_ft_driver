@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         env:
-          - ROS_DISTRO: galctic
+          - ROS_DISTRO: galactic
             ROS_REPO: main
     env:
       BEFORE_INIT: 'sudo sudo apt-get -qq install -y --no-upgrade --no-install-recommends pkg-config libasio-dev libcurlpp-dev'
