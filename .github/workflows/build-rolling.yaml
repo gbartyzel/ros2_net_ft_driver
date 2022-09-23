@@ -19,10 +19,10 @@ jobs:
           - ROS_DISTRO: rolling
             ROS_REPO: main
     env:
-      BEFORE_INIT: 'apt-get -qq install -y --no-upgrade --no-install-recommends pkg-config libasio-dev libcurlpp-dev'
       BEFORE_SETUP_UPSTREAM_WORKSPACE: 'sudo apt-get -qq install -y --no-upgrade --no-install-recommends git && git config --global --add safe.directory "*"'
       UPSTREAM_WORKSPACE: ros2_net_ft_driver.rolling.repos
       AFTER_SETUP_UPSTREAM_WORKSPACE: 'vcs pull $BASEDIR/upstream_ws/src'
+      AFTER_INSTALL_TARGET_DEPENDENCIES: 'sudo apt-get -qq install -y --no-upgrade --no-install-recommends pkg-config libasio-dev libcurlpp-dev'
       TARGET_CMAKE_ARGS: >
         -DCMAKE_BUILD_TYPE='Release'
       CCACHE_DIR: ${{ github.workspace }}/.ccache
