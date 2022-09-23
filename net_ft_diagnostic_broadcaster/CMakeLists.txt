@@ -34,7 +34,7 @@ ament_target_dependencies(
   ${PROJECT_NAME}
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
-target_compile_definitions(${PROJECT_NAME} PRIVATE "FORCE_TORQUE_SENSOR_BROADCASTER_BUILDING_DLL")
+
 pluginlib_export_plugin_description_file(controller_interface controller_plugins.xml)
 
 install(TARGETS ${PROJECT_NAME}

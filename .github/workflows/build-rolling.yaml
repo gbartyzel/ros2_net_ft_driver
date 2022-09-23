@@ -59,6 +59,14 @@ jobs:
       - name: industrial_ci
         uses: "ros-industrial/industrial_ci@master"
         env: ${{ matrix.env }}
+      - name: upload test artifacts (on failure)
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: test-results
+          path: ${{ env.BASEDIR }}/target_ws/**/test_results/**/*.xml
+      - name: upload codecov report
+
       - name: prepare target_ws for cache
         if: ${{ always()}}
         run: |
