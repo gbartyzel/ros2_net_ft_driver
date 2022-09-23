@@ -13,24 +13,21 @@ on:
 
 jobs:
   industrial_ci:
+    name: rolling-main
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         env:
           - ROS_DISTRO: rolling
             ROS_REPO: main
     env:
+      BEFORE_INSTALL_TARGET_DEPENDENCIES: 'sudo apt-get -qq update && sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev'
       BEFORE_SETUP_UPSTREAM_WORKSPACE: 'sudo apt-get -qq install -y --no-upgrade --no-install-recommends git && git config --global --add safe.directory "*"'
       UPSTREAM_WORKSPACE: ros2_net_ft_driver.rolling.repos
       AFTER_SETUP_UPSTREAM_WORKSPACE: 'vcs pull $BASEDIR/upstream_ws/src'
-      AFTER_INSTALL_TARGET_DEPENDENCIES: 'sudo apt-get -qq install -y --no-upgrade --no-install-recommends pkg-config libasio-dev libcurlpp-dev'
-      TARGET_CMAKE_ARGS: >
-        -DCMAKE_BUILD_TYPE='Release'
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       BASEDIR: ${{ github.workspace }}/.work
-      CACHE_PREFIX: ${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
-
-    name: "${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}"
-    runs-on: ubuntu-latest
+      CACHE_PREFIX: rolling-main
     steps:
       - uses: actions/checkout@v2
       - name: cache upstream_ws
