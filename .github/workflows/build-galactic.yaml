@@ -3,13 +3,13 @@ name: Build Rolling
 on:
   workflow_dispatch:
     branches:
-      - galctic
+      - galactic
   pull_request:
     branches:
-      - galctic
+      - galactic
   push:
     branches:
-      - galctic
+      - galactic
 
 jobs:
   industrial_ci:
