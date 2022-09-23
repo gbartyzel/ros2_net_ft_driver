@@ -65,8 +65,6 @@ jobs:
         with:
           name: test-results
           path: ${{ env.BASEDIR }}/target_ws/**/test_results/**/*.xml
-      - name: upload codecov report
-
       - name: prepare target_ws for cache
         if: ${{ always()}}
         run: |
