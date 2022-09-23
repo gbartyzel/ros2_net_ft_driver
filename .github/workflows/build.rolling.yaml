@@ -1,7 +1,4 @@
-# This config uses industrial_ci (https://github.com/ros-industrial/industrial_ci.git).
-# For troubleshooting, see readme (https://github.com/ros-industrial/industrial_ci/blob/master/README.rst)
-
-name: Build and Test
+name: Build Rolling
 
 on:
   workflow_dispatch:
@@ -20,7 +17,7 @@ jobs:
       matrix:
         env:
           - ROS_DISTRO: rolling
-            ROS_REPO: main
+            ROS_REPO: rolling
     env:
       BEFORE_SETUP_UPSTREAM_WORKSPACE: 'sudo apt-get -qq install -y --no-upgrade --no-install-recommends git && git config --global --add safe.directory "*"'
       UPSTREAM_WORKSPACE: ros2_net_ft_driver.rolling.repos
