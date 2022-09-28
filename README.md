@@ -1,7 +1,7 @@
 # Net F/T Sensor Driver
 
 This is meta-package that contains ROS2 software for reading the data from F/T sensors
-with RDT interface such as: ATI F/T sensors, OnRobot F/T sensors.
+with RDT communication interface such as: ATI F/T sensors, OnRobot F/T sensors.
 
 - `net_ft_driver`: A ros2_control hardware interface for F/T sensor.
 - `net_ft_diagnostic_broadcaster`: A ros2_controller for broadcasting a diagnostic
