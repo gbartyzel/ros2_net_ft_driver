@@ -4,6 +4,7 @@
     <xacro:arg name="ip_address" default="192.168.1.1" />
     <xacro:arg name="rdt_sampling_rate" default="500" />
     <xacro:arg name="sensor_type" default="ati_axia80" />
+    <xacro:arg name="internal_filter_rate" default="0" />
 
     <link name="world" />
     <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor_macro.urdf.xacro" />
@@ -12,7 +13,8 @@
       prefix=""
       ip_address="$(arg ip_address)"
       rdt_sampling_rate="$(arg rdt_sampling_rate)"
-      sensor_type="$(arg sensor_type)">
+      sensor_type="$(arg sensor_type)"
+      internal_filter_rate="$(arg internal_filter_rate)">
         <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:net_ft_sensor>
 </robot>
