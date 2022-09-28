@@ -43,7 +43,11 @@ public:
 
   OnRobotFTInterface() = delete;
 
-  bool set_sampling_rate(int rate);
+  bool set_bias() final;
+
+  bool set_sampling_rate(int rate) final;
+
+  bool set_internal_filter(int rate) final;
 };
 
 class OnRobotFTFactory : public NetFTFactory
