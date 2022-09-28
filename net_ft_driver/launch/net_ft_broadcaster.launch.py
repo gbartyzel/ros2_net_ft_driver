@@ -42,6 +42,7 @@ def launch_setup(context, *args, **kwargs):
     ip_address = LaunchConfiguration("ip_address")
     rdt_sampling_rate = LaunchConfiguration("rdt_sampling_rate")
     sensor_type = LaunchConfiguration("sensor_type")
+    internal_filter_rate = LaunchConfiguration("internal_filter_rate")
 
     robot_description_content = Command(
         [
@@ -63,6 +64,9 @@ def launch_setup(context, *args, **kwargs):
             " ",
             "sensor_type:=",
             sensor_type,
+            " ",
+            "internal_filter_rate:=",
+            internal_filter_rate,
             " ",
         ]
     )
@@ -136,6 +140,16 @@ def generate_launch_description():
             name="rdt_sampling_rate",
             default_value="500",
             description="The RDT sampling rate.",
+        )
+    )
+    declared_arguments.append(
+        launch.actions.DeclareLaunchArgument(
+            name="internal_filter_rate",
+            default_value="0",
+            description=(
+                "The internal low pass filter rate, "
+                "refer for specific values to the sensor manuals.",
+            ),
         )
     )
 

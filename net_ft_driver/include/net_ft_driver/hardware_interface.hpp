@@ -71,8 +71,6 @@ public:
   hardware_interface::return_type read(const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
 private:
-  Vector6D apply_offset(Vector6D raw_values);
-
   std::unique_ptr<NetFTInterface> driver_;
 
   std::string ip_address_;
