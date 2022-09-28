@@ -6,7 +6,8 @@
     *origin
     ip_address
     rdt_sampling_rate
-    sensor_type">
+    sensor_type
+    internal_filter_rate">
 
     <xacro:macro name="cylinder_inertial" params="radius length mass *origin">
       <inertial>
@@ -68,6 +69,7 @@
       name="NetFtHardwareInterface"
       sensor_type="${sensor_type}"
       ip_address="${ip_address}"
-      rdt_sampling_rate="${rdt_sampling_rate}"/>
+      rdt_sampling_rate="${rdt_sampling_rate}"
+      internal_filter_rate="${internal_filter_rate}"/>
   </xacro:macro>
 </robot>
