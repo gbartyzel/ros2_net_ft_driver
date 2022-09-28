@@ -60,11 +60,17 @@ CallbackReturn NetFtHardwareInterface::on_init(const hardware_interface::Hardwar
   ip_address_ = info_.hardware_parameters["ip_address"];
   sensor_type_ = info_.hardware_parameters["sensor_type"];
   int rdt_rate = std::stoi(info_.hardware_parameters["rdt_sampling_rate"]);
+  int internal_filter_rate = std::stoi(info_.hardware_parameters["internal_filter_rate"]);
 
   driver_ = NetFTInterface::create(sensor_type_, ip_address_);
 
   if (!driver_->set_sampling_rate(rdt_rate)) {
-    RCLCPP_FATAL(kLogger, "Couldn't set RDT sampling rate of the F/T Sensor");
+    RCLCPP_FATAL(kLogger, "Couldn't set RDT sampling rate of the F/T Sensor!");
+    return CallbackReturn::ERROR;
+  }
+
+  if (!driver_->set_internal_filter(internal_filter_rate)) {
+    RCLCPP_FATAL(kLogger, "Couldn't set internal low pass filter!");
     return CallbackReturn::ERROR;
   }
 
@@ -94,11 +100,10 @@ std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_s
 CallbackReturn NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   if (driver_->start_streaming()) {
+    driver_->set_bias();
     std::unique_ptr<SensorData> data = driver_->receive_data();
     if (data) {
-      offset_ft_values_ = data->ft_values;
-      ft_sensor_measurements_ = apply_offset(data->ft_values);
-
+      ft_sensor_measurements_ = data->ft_values;
       RCLCPP_INFO(kLogger, "Successfully started data streaming!");
       return CallbackReturn::SUCCESS;
     }
@@ -121,22 +126,13 @@ hardware_interface::return_type NetFtHardwareInterface::read()
 {
   auto data = driver_->receive_data();
   if (data) {
-    ft_sensor_measurements_ = apply_offset(data->ft_values);
+    ft_sensor_measurements_ = data->ft_values;
     lost_packets_ = static_cast<double>(data->lost_packets);
     packet_count_ = static_cast<double>(data->packet_count);
     out_of_order_count_ = static_cast<double>(data->out_of_order_count);
     status_ = static_cast<double>(data->status);
   }
   return hardware_interface::return_type::OK;
-}
-
-Vector6D NetFtHardwareInterface::apply_offset(Vector6D ft_values)
-{
-  Vector6D offseted_values;
-  for (size_t i = 0; i < ft_values.size(); i++) {
-    offseted_values[i] = ft_values[i] - offset_ft_values_[i];
-  }
-  return offseted_values;
 }
 }  // namespace net_ft_driver
 

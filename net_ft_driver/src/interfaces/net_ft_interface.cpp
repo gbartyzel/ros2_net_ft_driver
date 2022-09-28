@@ -43,7 +43,6 @@ constexpr int kPort = 49152;
 constexpr uint16_t kHeader = 0x1234;
 constexpr uint16_t kCommandSize = 8;
 constexpr uint16_t kRecordSize = 36;
-constexpr uint32_t kNumSamples = 0;
 
 constexpr uint32_t kStopStreaming = 0x0000;
 constexpr uint32_t kStartStreaming = 0x0002;
@@ -51,12 +50,12 @@ constexpr uint32_t kStartStreaming = 0x0002;
 namespace net_ft_driver
 {
 NetFTInterface::NetFTInterface(const std::string& ip_address, int max_sampling_freq)
-  : min_sampling_freq_(1)
-  , max_sampling_freq_(max_sampling_freq)
-  , socket_(io_service_)
+  : socket_(io_service_)
   , ip_address_(ip_address)
   , force_scale_(1.0)
   , torque_scale_(1.0)
+  , min_sampling_freq_(1)
+  , max_sampling_freq_(max_sampling_freq)
   , rdt_sequence_(0)
   , ft_sequence_(0)
   , last_rdt_sequence_(0)
@@ -64,7 +63,7 @@ NetFTInterface::NetFTInterface(const std::string& ip_address, int max_sampling_f
   , packet_count_(0)
   , out_of_order_count_(0)
   , status_(0)
-  , raw_ft_values_({ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 })
+  , ft_values_({ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 })
 {
   asio::ip::udp::endpoint endpoint(asio::ip::address_v4::from_string(ip_address), kPort);
   socket_.open(asio::ip::udp::v4());
@@ -83,12 +82,12 @@ NetFTInterface::~NetFTInterface()
 
 bool NetFTInterface::start_streaming()
 {
-  return send_command(kStartStreaming, kNumSamples);
+  return send_command(kStartStreaming);
 }
 
 bool NetFTInterface::stop_streaming()
 {
-  return send_command(kStopStreaming, kNumSamples);
+  return send_command(kStopStreaming);
 }
 
 std::unique_ptr<SensorData> NetFTInterface::receive_data()
@@ -107,8 +106,9 @@ std::unique_ptr<SensorData> NetFTInterface::receive_data()
     packet_count_++;
     lost_packets_ += (seq_diff - 1);
   }
+  last_rdt_sequence_ = rdt_sequence_;
   std::unique_ptr<SensorData> data(
-      new SensorData{ raw_ft_values_, lost_packets_, packet_count_, out_of_order_count_, status_ });
+      new SensorData{ ft_values_, lost_packets_, packet_count_, out_of_order_count_, status_ });
   return data;
 }
 
@@ -180,11 +180,11 @@ void NetFTInterface::unpack(uint8_t* buffer)
   ft_sequence_ = ntohl(*reinterpret_cast<uint32_t*>(&buffer[4]));
   status_ = ntohl(*reinterpret_cast<uint32_t*>(&buffer[8]));
   for (int i = 0; i < 6; i++) {
-    raw_ft_values_[i] = static_cast<double>(ntohl(*reinterpret_cast<int32_t*>(&buffer[12 + i * 4])));
+    raw_counts_[i] = ntohl(*reinterpret_cast<int32_t*>(&buffer[12 + i * 4]));
     if (i < 3) {
-      raw_ft_values_[i] *= force_scale_;
+      ft_values_[i] = static_cast<double>(raw_counts_[i]) * force_scale_;
     } else {
-      raw_ft_values_[i] *= torque_scale_;
+      ft_values_[i] = static_cast<double>(raw_counts_[i]) * torque_scale_;
     }
   }
 }

@@ -45,6 +45,8 @@ namespace net_ft_driver
 {
 using Vector6D = std::array<double, 6>;
 
+using Vecotr6I32 = std::array<int32_t, 6>;
+
 struct SensorData
 {
   Vector6D ft_values;
@@ -88,7 +90,11 @@ public:
 
   bool stop_streaming();
 
+  virtual bool set_bias() = 0;
+
   virtual bool set_sampling_rate(int rate) = 0;
+
+  virtual bool set_internal_filter(int rate) = 0;
 
   std::unique_ptr<SensorData> receive_data();
 
@@ -99,37 +105,15 @@ protected:
     return map_instance;
   }
 
-  template <typename T>
-  bool set_cgi_variable(const std::string& cgi_name, const std::string& var_name, T value)
-  {
-    try {
-      curlpp::Cleanup cleanup;
-      curlpp::Easy request;
-      std::string xml_url{ "http://" + ip_address_ + "/" + cgi_name + "?" + var_name + "&" + std::to_string(value) };
-      request.setOpt(new curlpp::options::Url(xml_url));
-      request.perform();
-      return true;
-    } catch (curlpp::RuntimeError& e) {
-      std::cerr << e.what() << std::endl;
-    } catch (curlpp::LogicError& e) {
-      std::cerr << e.what() << std::endl;
-    }
-    return false;
-  }
-
-  bool send_command(uint32_t command, uint32_t sample_count);
+  bool send_command(uint32_t command, uint32_t sample_count = 0);
 
   std::string get_config(const std::string& xml_name);
 
   std::string parse_config(const std::string& response, const std::string& root, const std::string& var_name);
 
-  void unpack(uint8_t* buffer);
-
-  int min_sampling_freq_;
-  int max_sampling_freq_;
-
-private:
   void pack(uint8_t* buffer, uint32_t command, uint32_t sample_count) const;
+
+  void unpack(uint8_t* buffer);
 
   asio::io_service io_service_;
   asio::ip::udp::socket socket_;
@@ -138,6 +122,9 @@ private:
 
   double force_scale_;
   double torque_scale_;
+
+  int min_sampling_freq_;
+  int max_sampling_freq_;
 
   uint32_t rdt_sequence_;
   uint32_t ft_sequence_;
@@ -148,7 +135,8 @@ private:
   uint32_t out_of_order_count_;
   uint32_t status_;
 
-  Vector6D raw_ft_values_;
+  Vector6D ft_values_;
+  Vecotr6I32 raw_counts_;
 };
 }  // namespace net_ft_driver
 

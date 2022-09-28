@@ -31,6 +31,8 @@
 
 #include "net_ft_driver/interfaces/onrobot_ft_interface.hpp"
 
+constexpr uint32_t kBias = 0x0042;
+constexpr uint32_t kSetInternalFiltering = 0x0081;
 constexpr uint32_t kSetSamplingRate = 0x0082;
 
 namespace net_ft_driver
@@ -39,10 +41,23 @@ OnRobotFTInterface::OnRobotFTInterface(const std::string& ip_address) : NetFTInt
 {
 }
 
+bool OnRobotFTInterface::set_bias()
+{
+  return send_command(kBias, 255);
+}
+
 bool OnRobotFTInterface::set_sampling_rate(int rate)
 {
   rate = std::max(min_sampling_freq_, std::min(rate, max_sampling_freq_));
   int sample_count = max_sampling_freq_ / rate;
   return send_command(kSetSamplingRate, sample_count);
+}
+bool OnRobotFTInterface::set_internal_filter(int rate)
+{
+  if (rate < 0 || rate > 6) {
+    std::cerr << "Filter rate out of the range, setting to the closest value!";
+    rate = std::max(0, std::min(rate, 6));
+  }
+  return send_command(kSetInternalFiltering, rate);
 }
 }  // namespace net_ft_driver

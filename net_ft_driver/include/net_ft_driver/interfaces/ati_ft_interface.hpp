@@ -43,7 +43,14 @@ public:
 
   AtiFTInterface() = delete;
 
-  bool set_sampling_rate(int rate) final;
+  bool set_bias() final;
+
+  bool set_sampling_rate(int rate) override;
+
+  bool set_internal_filter(int rate) final;
+
+protected:
+  bool set_cgi_variable(const std::string& cgi_name, const std::string& var_name, const std::string& value);
 };
 
 class AtiFTFactory : public NetFTFactory

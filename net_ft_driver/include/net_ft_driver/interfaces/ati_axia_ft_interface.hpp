@@ -33,17 +33,18 @@
 #include <string>
 
 #include "net_ft_driver/interfaces/net_ft_interface.hpp"
+#include "net_ft_driver/interfaces/ati_ft_interface.hpp"
 
 namespace net_ft_driver
 {
-class AtiAxiaFTInterface : public NetFTInterface
+class AtiAxiaFTInterface : public AtiFTInterface
 {
 public:
   explicit AtiAxiaFTInterface(const std::string& ip_address);
 
   AtiAxiaFTInterface() = delete;
 
-  bool set_sampling_rate(int rate);
+  bool set_sampling_rate(int rate) final;
 };
 
 class AtiAxiaFTFactory : public NetFTFactory
