@@ -32,7 +32,7 @@
       <xacro:property name="sensor_radius" value="0.07"/>
       <xacro:property name="sensor_height" value="0.0375"/>
     </xacro:if>
-    
+
     <xacro:if value="${sensor_type == 'ati'}">
       <xacro:property name="mesh_file" value="ati_gamma_ip65_ft_sensor"/>
       <xacro:property name="sensor_mass" value="0.5"/>
