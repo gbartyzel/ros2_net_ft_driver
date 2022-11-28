@@ -7,7 +7,8 @@
     ip_address
     rdt_sampling_rate
     sensor_type
-    internal_filter_rate">
+    internal_filter_rate
+    use_hardware_biasing">
 
     <xacro:macro name="cylinder_inertial" params="radius length mass *origin">
       <inertial>
@@ -77,6 +78,7 @@
       sensor_type="${sensor_type}"
       ip_address="${ip_address}"
       rdt_sampling_rate="${rdt_sampling_rate}"
-      internal_filter_rate="${internal_filter_rate}"/>
+      internal_filter_rate="${internal_filter_rate}"
+      use_hardware_biasing="${use_hardware_biasing}"/>
   </xacro:macro>
 </robot>

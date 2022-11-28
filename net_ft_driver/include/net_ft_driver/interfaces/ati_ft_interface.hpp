@@ -45,6 +45,8 @@ public:
 
   bool set_bias() final;
 
+  bool clear_bias() final;
+
   bool set_sampling_rate(int rate) override;
 
   bool set_internal_filter(int rate) final;

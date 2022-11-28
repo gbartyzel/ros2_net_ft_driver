@@ -78,7 +78,7 @@ private:
 
   Vector6D ft_sensor_measurements_;
   Vector6D offset_ft_values_;
-
+  
   double packet_count_;
   double lost_packets_;
   double out_of_order_count_;
