@@ -99,8 +99,13 @@ std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_s
 
 CallbackReturn NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
+  std::string use_hardware_biasing = info_.hardware_parameters["use_hardware_biasing"];
   if (driver_->start_streaming()) {
-    driver_->set_bias();
+    if (use_hardware_biasing == "True" || use_hardware_biasing == "true") {
+      driver_->set_bias();
+    } else {
+      driver_->clear_bias();
+    }
     std::unique_ptr<SensorData> data = driver_->receive_data();
     if (data) {
       ft_sensor_measurements_ = data->ft_values;

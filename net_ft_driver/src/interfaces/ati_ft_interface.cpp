@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <string>
+#include <vector>
 
 #include "net_ft_driver/interfaces/ati_ft_interface.hpp"
 
@@ -60,6 +61,16 @@ bool AtiFTInterface::set_cgi_variable(const std::string& cgi_name, const std::st
 bool AtiFTInterface::set_bias()
 {
   return send_command(kBias);
+}
+
+bool AtiFTInterface::clear_bias()
+{
+  std::vector<bool> cum_ret;
+  for (int i = 0; i < 6; i++) {
+    auto ret = set_cgi_variable("setting.cgi", "setbias" + std::to_string(i), std::to_string(0));
+    cum_ret.push_back(ret);
+  }
+  return std::all_of(cum_ret.begin(), cum_ret.end(), [](bool v) { return v; });
 }
 
 bool AtiFTInterface::set_sampling_rate(int rate)

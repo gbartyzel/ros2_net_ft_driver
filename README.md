@@ -51,3 +51,4 @@ where:
 - `sensor_type`: the sensor type, select one of `ati`, `ati_axia`, `onrobot`.
 - `rdt_sampling_rate`: the sampling rate of the RDT communication, please refer to
   the sensor manuals for the frequency range.
+- `use_hardware_biasing`: whether to use built-in sensor biasing.
