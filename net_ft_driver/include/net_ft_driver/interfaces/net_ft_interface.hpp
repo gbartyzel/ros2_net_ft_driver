@@ -92,6 +92,8 @@ public:
 
   virtual bool set_bias() = 0;
 
+  virtual bool clear_bias() = 0;
+
   virtual bool set_sampling_rate(int rate) = 0;
 
   virtual bool set_internal_filter(int rate) = 0;

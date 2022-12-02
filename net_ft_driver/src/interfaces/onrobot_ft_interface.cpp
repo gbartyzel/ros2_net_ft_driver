@@ -46,6 +46,11 @@ bool OnRobotFTInterface::set_bias()
   return send_command(kBias, 255);
 }
 
+bool OnRobotFTInterface::clear_bias()
+{
+  return send_command(kBias, 0);
+}
+
 bool OnRobotFTInterface::set_sampling_rate(int rate)
 {
   rate = std::max(min_sampling_freq_, std::min(rate, max_sampling_freq_));

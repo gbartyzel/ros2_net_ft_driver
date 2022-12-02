@@ -43,6 +43,7 @@ def launch_setup(context, *args, **kwargs):
     rdt_sampling_rate = LaunchConfiguration("rdt_sampling_rate")
     sensor_type = LaunchConfiguration("sensor_type")
     internal_filter_rate = LaunchConfiguration("internal_filter_rate")
+    use_hardware_biasing = LaunchConfiguration("use_hardware_biasing")
 
     robot_description_content = Command(
         [
@@ -67,6 +68,9 @@ def launch_setup(context, *args, **kwargs):
             " ",
             "internal_filter_rate:=",
             internal_filter_rate,
+            " ",
+            "use_hardware_biasing:=",
+            use_hardware_biasing,
             " ",
         ]
     )
@@ -145,11 +149,18 @@ def generate_launch_description():
     declared_arguments.append(
         launch.actions.DeclareLaunchArgument(
             name="internal_filter_rate",
-            default_value="0",
+            default_value="false",
             description=(
                 "The internal low pass filter rate, "
                 "refer for specific values to the sensor manuals.",
             ),
+        )
+    )
+    declared_arguments.append(
+        launch.actions.DeclareLaunchArgument(
+            name="use_hardware_biasing",
+            default_value="0",
+            description="Whether to use built-in sensor zeroing",
         )
     )
 
