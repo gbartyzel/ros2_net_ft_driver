@@ -149,7 +149,7 @@ def generate_launch_description():
     declared_arguments.append(
         launch.actions.DeclareLaunchArgument(
             name="internal_filter_rate",
-            default_value="0",
+            default_value="false",
             description=(
                 "The internal low pass filter rate, "
                 "refer for specific values to the sensor manuals.",

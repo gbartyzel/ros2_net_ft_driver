@@ -100,9 +100,10 @@ std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_s
 hardware_interface::CallbackReturn
 NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
-  bool use_hardware_biasing = info_.hardware_parameters["use_hardware_biasing"] == "true";
+  bool use_hardware_biasing = info_.hardware_parameters["use_hardware_biasing"] == "True" || 
+                              info_.hardware_parameters["use_hardware_biasing"] == "true";
   if (driver_->start_streaming()) {
-    if(use_hardware_biasing){
+    if (use_hardware_biasing) {
       driver_->set_bias();
     } else {
       driver_->clear_bias();

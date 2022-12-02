@@ -16,7 +16,7 @@
       rdt_sampling_rate="$(arg rdt_sampling_rate)"
       sensor_type="$(arg sensor_type)"
       internal_filter_rate="$(arg internal_filter_rate)"
-      use_hardware_biasing="$(use_hardware_biasing)">
+      use_hardware_biasing="$(arg use_hardware_biasing)">
         <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:net_ft_sensor>
 </robot>
