@@ -9,15 +9,14 @@ on:
 jobs:
   ament_lint:
     name: ament_${{ matrix.linter }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
           linter: [cppcheck, lint_cmake]
     steps:
       - uses: actions/checkout@v3
-      - run: echo "AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS=1" >> $AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS
-      - uses: ros-tooling/setup-ros@v0.4
+      - uses: ros-tooling/setup-ros@v0.2
       - uses: ros-tooling/action-ros-lint@v0.1
         with:
           distribution: rolling
@@ -28,12 +27,12 @@ jobs:
 
   ament_copyright:
     name: ament_copyright
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
-      - uses: ros-tooling/setup-ros@v0.4
+      - uses: ros-tooling/setup-ros@v0.2
       - uses: ros-tooling/action-ros-lint@v0.1
         with:
           distribution: rolling
@@ -45,14 +44,14 @@ jobs:
 
   ament_lint_120:
     name: ament_${{ matrix.linter }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
           linter: [cpplint]
     steps:
       - uses: actions/checkout@v3
-      - uses: ros-tooling/setup-ros@v0.4
+      - uses: ros-tooling/setup-ros@v0.2
       - uses: ros-tooling/action-ros-lint@v0.1
         with:
           distribution: rolling

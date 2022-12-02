@@ -14,7 +14,7 @@ on:
 jobs:
   industrial_ci:
     name: rolling-main
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         env:
@@ -29,7 +29,7 @@ jobs:
       BASEDIR: ${{ github.workspace }}/.work
       CACHE_PREFIX: rolling-main
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: cache upstream_ws
         uses: pat-s/always-upload-cache@v2.1.5
         with:
