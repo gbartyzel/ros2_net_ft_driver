@@ -15,6 +15,7 @@ jobs:
       matrix:
           linter: [cppcheck, lint_cmake]
     steps:
+      - run: echo "AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS=1" >> $AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS
       - uses: actions/checkout@v1
       - uses: ros-tooling/setup-ros@v0.4
       - uses: ros-tooling/action-ros-lint@v0.1
@@ -24,7 +25,6 @@ jobs:
           package-name:
             net_ft_driver
             net_ft_diagnostic_broadcaster
-      - run: echo "AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS=1" >> $AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS
 
   ament_copyright:
     name: ament_copyright
