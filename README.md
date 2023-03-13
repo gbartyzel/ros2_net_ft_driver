@@ -34,7 +34,7 @@ Build the package:
 
 ```Bash
 colcon build --symlink-install
-ource install/local_setup.sh
+source install/local_setup.sh
 ```
 
 ## Running
