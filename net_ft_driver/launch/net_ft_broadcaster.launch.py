@@ -135,7 +135,7 @@ def generate_launch_description():
     declared_arguments.append(
         launch.actions.DeclareLaunchArgument(
             name="ip_address",
-            default_value="192.168.1.1",
+            default_value="192.168.1.10",
             description="F/T Sensor IP adress",
         )
     )
