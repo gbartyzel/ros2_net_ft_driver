@@ -149,7 +149,7 @@ def generate_launch_description():
     declared_arguments.append(
         launch.actions.DeclareLaunchArgument(
             name="internal_filter_rate",
-            default_value="false",
+            default_value="0",
             description=(
                 "The internal low pass filter rate, "
                 "refer for specific values to the sensor manuals.",
@@ -159,7 +159,7 @@ def generate_launch_description():
     declared_arguments.append(
         launch.actions.DeclareLaunchArgument(
             name="use_hardware_biasing",
-            default_value="0",
+            default_value="flase",
             description="Whether to use built-in sensor zeroing",
         )
     )

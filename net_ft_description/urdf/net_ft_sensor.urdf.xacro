@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro" name="net_ft_sensor">
     <!-- parameters -->
-    <xacro:arg name="ip_address" default="192.168.1.1" />
+    <xacro:arg name="ip_address" default="192.168.1.10" />
     <xacro:arg name="rdt_sampling_rate" default="500" />
     <xacro:arg name="sensor_type" default="ati_axia80" />
     <xacro:arg name="internal_filter_rate" default="0" />
