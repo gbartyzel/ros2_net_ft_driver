@@ -14,8 +14,7 @@ Currently this package supports only following F/T sensors:
 - ATI AXIA series
 - ATI Net F/T series
 
-Software was tested with `ATI AXIA80` and `OnRobot HEX-E V2`. Tests on ATI Net F/T
-series sensor are needed.
+Software was tested with `ATI AXIA80` and `OnRobot HEX-E V2` and `ATI Net F/T series`.
 
 ## Installation
 
