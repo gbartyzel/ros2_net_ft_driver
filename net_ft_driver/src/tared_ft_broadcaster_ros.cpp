@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "net_ft_taring_broadcaster/net_ft_taring_broadcaster.hpp"
+#include "net_ft_driver/tared_ft_broadcaster_ros.hpp"
 
 using std::placeholders::_1;
 using std::placeholders::_2;
 
-namespace net_ft_taring_broadcaster
+namespace tared_ft_broadcaster
 {
-NetFtTaringBroadcaster::NetFtTaringBroadcaster() : Node("net_ft_taring_broadcaster"), should_tare_(true)
+TaredFTBroadcaster::TaredFTBroadcaster() : Node("tared_ft_broadcaster"), should_tare_(true)
 {
   this->declare_parameter("topic_name", rclcpp::PARAMETER_STRING);
   auto topic_name = this->get_parameter("topic_name").as_string();
 
   sub_ = this->create_subscription<geometry_msgs::msg::WrenchStamped>(
-      topic_name, 10, std::bind(&NetFtTaringBroadcaster::callback, this, _1));
-  pub_ = this->create_publisher<geometry_msgs::msg::WrenchStamped>("tared_" + topic_name, 10);
-  srv_ = this->create_service<std_srvs::srv::Trigger>("tare", std::bind(&NetFtTaringBroadcaster::tare, this, _1, _2));
+      topic_name, 10, std::bind(&TaredFTBroadcaster::callback, this, _1));
+  pub_ = this->create_publisher<geometry_msgs::msg::WrenchStamped>("~/tared_" + topic_name, 10);
+  srv_ = this->create_service<std_srvs::srv::Trigger>("tare", std::bind(&TaredFTBroadcaster::tare, this, _1, _2));
 }
 
-void NetFtTaringBroadcaster::callback(const geometry_msgs::msg::WrenchStamped::SharedPtr msg)
+void TaredFTBroadcaster::callback(const geometry_msgs::msg::WrenchStamped::SharedPtr msg)
 {
   data_ = msg->wrench;
   if (should_tare_) {
@@ -49,11 +49,11 @@ void NetFtTaringBroadcaster::callback(const geometry_msgs::msg::WrenchStamped::S
   pub_->publish(tared_msg);
 }
 
-void NetFtTaringBroadcaster::tare(const std_srvs::srv::Trigger::Request::SharedPtr req,
-                                  std_srvs::srv::Trigger::Response::SharedPtr res)
+void TaredFTBroadcaster::tare(const std_srvs::srv::Trigger::Request::SharedPtr req,
+                              std_srvs::srv::Trigger::Response::SharedPtr res)
 {
   RCLCPP_INFO(this->get_logger(), "Taring FT sensor");
   should_tare_ = true;
   res->success = true;
 }
-}  // namespace net_ft_taring_broadcaster
+}  // namespace tared_ft_broadcaster

@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef NET_FT_TARING_BROADCASTER__NET_FT_TARING_BROADCASTER_HPP_
-#define NET_FT_TARING_BROADCASTER__NET_FT_TARING_BROADCASTER_HPP_
+#ifndef NET_FT_DRIVER__TARED_FT_BROADCASTER_ROS_HPP_
+#define NET_FT_DRIVER__TARED_FT_BROADCASTER_ROS_HPP_
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/wrench_stamped.hpp"
 #include "geometry_msgs/msg/wrench.hpp"
 #include "std_srvs/srv/trigger.hpp"
 
-namespace net_ft_taring_broadcaster
+namespace tared_ft_broadcaster
 {
-class NetFtTaringBroadcaster : public rclcpp::Node
+class TaredFTBroadcaster : public rclcpp::Node
 {
 public:
-  NetFtTaringBroadcaster();
-  ~NetFtTaringBroadcaster() = default;
+  TaredFTBroadcaster();
+  ~TaredFTBroadcaster() = default;
 
 private:
   void callback(const geometry_msgs::msg::WrenchStamped::SharedPtr msg);
@@ -42,5 +42,5 @@ private:
   bool should_tare_;
 };
 
-}  // namespace net_ft_taring_broadcaster
-#endif  // NET_FT_TARING_BROADCASTER__NET_FT_TARING_BROADCASTER_HPP_
+}  // namespace tared_ft_broadcaster
+#endif  // NET_FT_DRIVER__TARED_FT_BROADCASTER_ROS_HPP__

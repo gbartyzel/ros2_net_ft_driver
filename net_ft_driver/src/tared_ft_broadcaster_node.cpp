@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "net_ft_taring_broadcaster/net_ft_taring_broadcaster.hpp"
+#include "net_ft_driver/tared_ft_broadcaster_ros.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 int main(int argc, char* argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<net_ft_taring_broadcaster::NetFtTaringBroadcaster>());
+  rclcpp::spin(std::make_shared<tared_ft_broadcaster::TaredFTBroadcaster>());
   rclcpp::shutdown();
   return 0;
 }

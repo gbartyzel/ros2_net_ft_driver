@@ -9,10 +9,12 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   ament_cmake
   ASIO
   CURLPP
+  geometry_msgs
   hardware_interface
   pluginlib
   rclcpp
   rclcpp_lifecycle
+  std_srvs
   TinyXML2
 )
 
@@ -48,9 +50,23 @@ ament_target_dependencies(
 )
 pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
 
+
+add_executable(tared_ft_broadcaster src/tared_ft_broadcaster_node.cpp src/tared_ft_broadcaster_ros.cpp)
+ament_target_dependencies(tared_ft_broadcaster ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_include_directories(
+  tared_ft_broadcaster
+  PRIVATE
+  include
+)
+
+install(
+  TARGETS tared_ft_broadcaster
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 install(
   TARGETS ${PROJECT_NAME}
-  DESTINATION lib
+  DESTINATION lib/
 )
 
 install(
