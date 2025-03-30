@@ -46,7 +46,7 @@ bool AtiFTInterface::set_cgi_variable(const std::string& cgi_name, const std::st
   try {
     curlpp::Cleanup cleanup;
     curlpp::Easy request;
-    std::string xml_url{ "http://" + ip_address_ + "/" + cgi_name + "?" + var_name + "&" + value };
+    std::string xml_url{ "http://" + ip_address_ + "/" + cgi_name + "?" + var_name + "=" + value };
     request.setOpt(new curlpp::options::Url(xml_url));
     request.perform();
     return true;
@@ -76,7 +76,7 @@ bool AtiFTInterface::clear_bias()
 bool AtiFTInterface::set_sampling_rate(int rate)
 {
   rate = std::max(min_sampling_freq_, std::min(rate, max_sampling_freq_));
-  return set_cgi_variable("comm.cgi", "commrdtrate", std::to_string(rate));
+  return set_cgi_variable("comm.cgi", "comrdtrate", std::to_string(rate));
 }
 
 bool AtiFTInterface::set_internal_filter(int rate)
