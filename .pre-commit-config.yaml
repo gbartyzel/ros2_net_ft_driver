@@ -20,9 +20,15 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 25.1.0
     hooks:
       - id: black
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.2.0
+    hooks:
+      - id: flake8
+        args: ["--ignore=E501,W503"]
 
   - repo: local
     hooks:
@@ -45,6 +51,15 @@ repos:
         language: system
         files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
         args: ["--linelength=120"]
+
+  - repo: local
+    hooks:
+      - id: ament_copyright
+        name: ament_copyright
+        description: Check if copyright notice is available in all files.
+        stages: [pre-commit]
+        entry: ament_copyright
+        language: system
 
   - repo: local
     hooks:
