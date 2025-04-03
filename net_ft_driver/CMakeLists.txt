@@ -6,14 +6,15 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
-    ament_cmake
-    ASIO
-    CURLPP
-    hardware_interface
-    pluginlib
-    rclcpp
-    rclcpp_lifecycle
-    TinyXML2)
+  ament_cmake
+  ASIO
+  CURLPP
+  hardware_interface
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
+  TinyXML2
+)
 
 find_package(ament_cmake REQUIRED)
 find_package(asio_cmake_module REQUIRED)
@@ -28,33 +29,47 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
 endforeach()
 
 add_library(
-  ${PROJECT_NAME} SHARED
-  src/hardware_interface.cpp src/interfaces/net_ft_interface.cpp
-  src/interfaces/ati_ft_interface.cpp src/interfaces/ati_axia_ft_interface.cpp
-  src/interfaces/onrobot_ft_interface.cpp)
-target_include_directories(${PROJECT_NAME} PRIVATE include)
-ament_target_dependencies(${PROJECT_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
-pluginlib_export_plugin_description_file(hardware_interface
-                                         hardware_interface_plugin.xml)
+  ${PROJECT_NAME}
+  SHARED
+  src/hardware_interface.cpp
+  src/interfaces/net_ft_interface.cpp
+  src/interfaces/ati_ft_interface.cpp
+  src/interfaces/ati_axia_ft_interface.cpp
+  src/interfaces/onrobot_ft_interface.cpp
+)
+target_include_directories(
+  ${PROJECT_NAME}
+  PRIVATE
+  include
+)
+ament_target_dependencies(
+  ${PROJECT_NAME}
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+)
+pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
 
-install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(
+  TARGETS ${PROJECT_NAME}
+  DESTINATION lib
+)
 
-install(DIRECTORY include/ DESTINATION include)
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
 
-install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY config launch
+  DESTINATION share/${PROJECT_NAME}
+)
 
-ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
+ament_export_include_directories(
+  include
+)
+ament_export_libraries(
+  ${PROJECT_NAME}
+)
+ament_export_dependencies(
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+)
 
 ament_package()
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # Disable ament_copyright
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  set(ament_cmake_uncrustify_FOUND TRUE)
-  set(ament_cmake_flake8_FOUND FALSE)
-  ament_lint_auto_find_test_dependencies()
-endif()
