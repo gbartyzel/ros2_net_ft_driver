@@ -29,7 +29,7 @@ repos:
       - id: ament_cppcheck
         name: ament_cppcheck
         description: Static code analysis of C/C++ files.
-        stages: [commit]
+        stages: [pre-commit]
         entry: ament_cppcheck
         language: system
         files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
@@ -40,7 +40,7 @@ repos:
       - id: ament_cpplint
         name: ament_cpplint
         description: Static code analysis of C/C++ files.
-        stages: [commit]
+        stages: [pre-commit]
         entry: ament_cpplint
         language: system
         files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
