@@ -15,7 +15,7 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:jazzy
+      image: ubuntu:noble
     steps:
       - uses: actions/checkout@v4
       - uses: ros-tooling/setup-ros@master
