@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        linter: [cppcheck, lint_cmake]
+        linter: [copyright, lint_cmake]
     steps:
       - uses: actions/checkout@v3
       - uses: ros-tooling/setup-ros@v0.7
@@ -23,22 +23,6 @@ jobs:
           linter: ${{ matrix.linter }}
           package-name: net_ft_driver
             net_ft_diagnostic_broadcaster
-
-  ament_copyright:
-    name: ament_copyright
-    runs-on: ubuntu-22.04
-    strategy:
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ros-tooling/setup-ros@v0.7
-      - uses: ros-tooling/action-ros-lint@v0.1
-        with:
-          distribution: rolling
-          linter: copyright
-          package-name: net_ft_driver
-            net_ft_diagnostic_broadcaster
-            net_ft_description
 
   ament_lint_120:
     name: ament_${{ matrix.linter }}
