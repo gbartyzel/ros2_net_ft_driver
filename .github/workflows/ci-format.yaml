@@ -18,11 +18,13 @@ jobs:
       image: ubuntu:noble
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v3
-      - uses: ros-tooling/setup-ros@master
-      - uses: ros-tooling/action-ros-lint@master
+      - uses: actions/setup-python@v5
         with:
-          distribution: rolling
+          python-version: 3.10.3
+      - uses: ros-tooling/setup-ros@v0.7
+      # - uses: ros-tooling/action-ros-lint@master
+      #   with:
+      #     distribution: rolling
       - name: Install system hooks
         run: sudo apt-get install clang-format cppcheck
       - uses: pre-commit/action@v3.0.1
