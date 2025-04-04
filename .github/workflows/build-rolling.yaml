@@ -50,7 +50,6 @@ jobs:
 
       # Run the ROS industrial CI, which will take care of building
       - uses: "ros-industrial/industrial_ci@master"
-        env: ${{ matrix.env }}
 
       # Upload test results if the build fails
       - name: Upload test artifacts (on failure)
