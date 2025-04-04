@@ -1,35 +1,36 @@
 name: Build Rolling
 
 on:
-  push:
+  workflow_dispatch:
     branches:
-      - main
       - rolling
   pull_request:
     branches:
-      - main
+      - rolling
+  push:
+    branches:
       - rolling
 
-env:
-  ROS_REPO: main
-  CCACHE_DIR: ${{ github.workspace }}/.ccache
-  BASEDIR: ${{ github.workspace }}/.work
-  CACHE_PREFIX: rolling-main
-  BEFORE_INSTALL_TARGET_DEPENDENCIES: |
-    sudo apt-get -qq update && 
-    sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  industrial_ci:
+    name: rolling-main
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        env:
+          - ROS_DISTRO: rolling
+            ROS_REPO: main
+    env:
+      BEFORE_INSTALL_TARGET_DEPENDENCIES: "sudo apt-get -qq update && sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev"
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      BASEDIR: ${{ github.workspace }}/.work
+      CACHE_PREFIX: rolling-main
     steps:
-      # Checkout source code from the repository
       - uses: actions/checkout@v4
         with:
           ref: rolling
-
-      # Cache target_ws to speed up build
+      # The target directory cache doesn't include the source directory because
+      # that comes from the checkout.  See "prepare target_ws for cache" task below
       - name: Cache target_ws
         uses: actions/cache@v4
         with:
@@ -37,8 +38,6 @@ jobs:
           key: target_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles('**/CMakeLists.txt', '**/package.xml') }}-${{ github.run_id }}
           restore-keys: |
             target_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles('**/CMakeLists.txt', '**/package.xml') }}
-
-      # Cache ccache to speed up compilation
       - name: Cache ccache
         uses: actions/cache@v4
         with:
@@ -47,21 +46,16 @@ jobs:
           restore-keys: |
             ccache-${{ env.CACHE_PREFIX }}-${{ github.sha }}
             ccache-${{ env.CACHE_PREFIX }}
-
-      # Run the ROS industrial CI, which will take care of building
       - uses: "ros-industrial/industrial_ci@master"
-
-      # Upload test results if the build fails
-      - name: Upload test artifacts (on failure)
+        env: ${{ matrix.env }}
+      - name: upload test artifacts (on failure)
         uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: test-results
           path: ${{ env.BASEDIR }}/target_ws/**/test_results/**/*.xml
-
-      # Clean up before caching the next run
-      - name: Prepare target_ws for caching
-        if: ${{ always() }}
+      - name: prepare target_ws for cache
+        if: ${{ always()}}
         run: |
           du -sh ${{ env.BASEDIR }}/target_ws
           sudo find ${{ env.BASEDIR }}/target_ws -wholename '*/test_results/*' -delete
