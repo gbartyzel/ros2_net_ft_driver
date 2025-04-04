@@ -29,6 +29,11 @@ on:
         default: ""
         required: false
         type: string
+      before_install_target_dependencies:
+        description: "BEFORE_INSTALL_TARGET_DEPENDENCIES variable for industrial_ci"
+        default: ""
+        required: false
+        type: string
       before_install_upstream_dependencies:
         description: "BEFORE_INSTALL_UPSTREAM_DEPENDENCIES variable for industrial_ci"
         default: ""
@@ -85,6 +90,7 @@ jobs:
           ROS_REPO: ${{ inputs.ros_repo }}
           OS_CODE_NAME: ${{ inputs.os_code_name }}
           BEFORE_INSTALL_UPSTREAM_DEPENDENCIES: ${{ inputs.before_install_upstream_dependencies }}
+          BEFORE_INSTALL_TARGET_DEPENDENCIES: ${{ inputs.before_install_target_dependencies }}
       - name: prepare target_ws for cache
         if: ${{ always() && ! matrix.env.CCOV }}
         run: |
