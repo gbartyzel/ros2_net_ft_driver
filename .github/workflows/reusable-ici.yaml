@@ -7,7 +7,7 @@ on:
     inputs:
       ref_for_scheduled_build:
         description: "Reference on which the repo should be checkout for scheduled build. Usually is this name of a branch or a tag."
-        default: ""
+        default: "rolling"
         required: false
         type: string
 

@@ -3,15 +3,15 @@ name: Build Humble
 on:
   workflow_dispatch:
     branches:
-      - rolling
+      - humble
 
   pull_request:
     branches:
-      - rolling
+      - humble
 
   push:
     branches:
-      - rolling
+      - humble
 
   schedule:
     - cron: "03 1 * * *"

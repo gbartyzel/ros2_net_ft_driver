@@ -3,15 +3,15 @@ name: Build Galactic
 on:
   workflow_dispatch:
     branches:
-      - rolling
+      - galactic
 
   pull_request:
     branches:
-      - rolling
+      - galactic
 
   push:
     branches:
-      - rolling
+      - galactic
 
   schedule:
     - cron: "03 1 * * *"
