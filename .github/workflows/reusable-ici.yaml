@@ -5,8 +5,8 @@ name: Reusable industrial_ci Workflow with Cache
 on:
   workflow_call:
     inputs:
-      ref_for_scheduled_build:
-        description: "Reference on which the repo should be checkout for scheduled build. Usually is this name of a branch or a tag."
+      ref_for_build:
+        description: "Reference on which the repo should be checkout for build."
         default: "rolling"
         required: false
         type: string
@@ -59,14 +59,10 @@ jobs:
       BASEDIR: ${{ github.workspace }}/${{ inputs.basedir }}
       CACHE_PREFIX: ${{ inputs.ros_distro }}-${{ inputs.upstream_workspace }}-${{ inputs.ros_repo }}-${{ github.job }}
     steps:
-      - name: Checkout ${{ inputs.ref }} when build is not scheduled
-        if: ${{ github.event_name != 'schedule' }}
-        uses: actions/checkout@v4
-      - name: Checkout ${{ inputs.ref }} on scheduled build
-        if: ${{ github.event_name == 'schedule' }}
+      - name: Checkout ${{ inputs.ref_for_build }} when build is not scheduled
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref_for_scheduled_build }}
+          ref: ${{ inputs.ref_for_build }}
       - name: cache target_ws
         if: ${{ ! matrix.env.CCOV }}
         uses: pat-s/always-upload-cache@v2.1.5

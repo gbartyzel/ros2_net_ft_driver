@@ -23,6 +23,6 @@ jobs:
       ros_distro: rolling
       ros_repo: main
       upstream_workspace: ros2_net_ft_driver.rolling
-      ref_for_scheduled_build: rolling
+      ref_for_build: rolling
       before_install_target_dependencies: |
         sudo apt-get -qq update && sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev

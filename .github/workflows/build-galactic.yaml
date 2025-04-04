@@ -23,6 +23,6 @@ jobs:
       ros_distro: galactic
       ros_repo: main
       upstream_workspace: ros2_net_ft_driver.galactic
-      ref_for_scheduled_build: galactic
+      ref_for_build: galactic
       before_install_target_dependencies: |
         sudo apt-get -qq update && sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev
