@@ -20,31 +20,15 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 25.1.0
     hooks:
       - id: black
 
-  - repo: local
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.2.0
     hooks:
-      - id: ament_cppcheck
-        name: ament_cppcheck
-        description: Static code analysis of C/C++ files.
-        stages: [commit]
-        entry: ament_cppcheck
-        language: system
-        files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
-
-  # Maybe use https://github.com/cpplint/cpplint instead
-  - repo: local
-    hooks:
-      - id: ament_cpplint
-        name: ament_cpplint
-        description: Static code analysis of C/C++ files.
-        stages: [commit]
-        entry: ament_cpplint
-        language: system
-        files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
-        args: ["--linelength=120"]
+      - id: flake8
+        args: ["--ignore=E501,W503"]
 
   - repo: local
     hooks:

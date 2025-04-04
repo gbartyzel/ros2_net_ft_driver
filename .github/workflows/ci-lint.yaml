@@ -9,54 +9,37 @@ on:
 jobs:
   ament_lint:
     name: ament_${{ matrix.linter }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-          linter: [cppcheck, lint_cmake]
+        linter: [copyright, lint_cmake, cppcheck]
     steps:
       - uses: actions/checkout@v3
-      - uses: ros-tooling/setup-ros@v0.2
+      - uses: ros-tooling/setup-ros@v0.7
       - uses: ros-tooling/action-ros-lint@v0.1
+        env:
+          AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS: 1
         with:
           distribution: rolling
           linter: ${{ matrix.linter }}
-          package-name:
-            net_ft_driver
+          package-name: net_ft_driver
             net_ft_diagnostic_broadcaster
-
-  ament_copyright:
-    name: ament_copyright
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ros-tooling/setup-ros@v0.2
-      - uses: ros-tooling/action-ros-lint@v0.1
-        with:
-          distribution: rolling
-          linter: copyright
-          package-name:
-            net_ft_driver
-            net_ft_diagnostic_broadcaster
-            net_ft_description
 
   ament_lint_120:
     name: ament_${{ matrix.linter }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-          linter: [cpplint]
+        linter: [cpplint]
     steps:
       - uses: actions/checkout@v3
-      - uses: ros-tooling/setup-ros@v0.2
+      - uses: ros-tooling/setup-ros@v0.7
       - uses: ros-tooling/action-ros-lint@v0.1
         with:
           distribution: rolling
           linter: cpplint
           arguments: "--linelength=120"
-          package-name:
-            net_ft_driver
+          package-name: net_ft_driver
             net_ft_diagnostic_broadcaster
