@@ -4,12 +4,17 @@ on:
   workflow_dispatch:
     branches:
       - rolling
+
   pull_request:
     branches:
       - rolling
+
   push:
     branches:
       - rolling
+
+  schedule:
+    - cron: "03 1 * * *"
 
 jobs:
   binary:
