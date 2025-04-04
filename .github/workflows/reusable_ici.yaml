@@ -53,7 +53,7 @@ on:
 jobs:
   reusable_industrial_ci_with_cache:
     name: ${{ inputs.ros_distro }} ${{ inputs.ros_repo }} ${{ inputs.os_code_name }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     env:
       CCACHE_DIR: ${{ github.workspace }}/${{ inputs.ccache_dir }}
       BASEDIR: ${{ github.workspace }}/${{ inputs.basedir }}
