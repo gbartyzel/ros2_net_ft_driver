@@ -58,15 +58,14 @@ jobs:
             ccache-${{ env.CACHE_PREFIX }}-${{ github.base_ref }}-
         continue-on-error: true
 
-      - name: Install Dependencies (including vcs)
+      - name: Install Dependencies
         run: |
           sudo apt-get -qq update
           sudo apt-get install -y \
             pkg-config \
             libasio-dev \
             libcurlpp-dev \
-            libcurl4-openssl-dev \
-            python3-vcstool  # Required for industrial_ci
+            libcurl4-openssl-dev
 
       - name: Setup Git for Upstream Workspace
         run: |
