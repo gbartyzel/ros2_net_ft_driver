@@ -34,7 +34,6 @@ on:
         default: ""
         required: false
         type: string
-
       ccache_dir:
         description: 'Local path to store cache (from "github.workspace"). For standard industrial_ci configuration do not have to be changed'
         default: ".ccache"
