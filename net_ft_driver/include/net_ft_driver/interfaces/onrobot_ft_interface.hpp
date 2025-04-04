@@ -47,7 +47,7 @@ public:
   }
   std::unique_ptr<NetFTInterface> create(const std::string& ip_address)
   {
-    return std::unique_ptr<OnRobotFTInterface>(new OnRobotFTInterface(ip_address));
+    return std::make_unique<OnRobotFTInterface>(ip_address);
   }
 };
 

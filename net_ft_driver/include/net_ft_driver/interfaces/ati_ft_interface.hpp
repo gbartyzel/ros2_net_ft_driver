@@ -50,7 +50,7 @@ public:
   }
   std::unique_ptr<NetFTInterface> create(const std::string& ip_address)
   {
-    return std::unique_ptr<AtiFTInterface>(new AtiFTInterface(ip_address));
+    return std::make_unique<AtiFTInterface>(ip_address);
   }
 };
 

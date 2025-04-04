@@ -44,7 +44,7 @@ class NetFTInterface
 public:
   static std::unique_ptr<NetFTInterface> create(const std::string& sensor_type, const std::string& ip_address)
   {
-    return std::move(get_factory_instance()[sensor_type]->create(ip_address));
+    return get_factory_instance()[sensor_type]->create(ip_address);
   }
 
   static void register_type(const std::string& sensor_type, NetFTFactory* factory)
