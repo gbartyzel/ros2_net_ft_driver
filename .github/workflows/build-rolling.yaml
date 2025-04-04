@@ -22,6 +22,7 @@ jobs:
             ROS_REPO: main
     env:
       BEFORE_INSTALL_TARGET_DEPENDENCIES: "sudo apt-get -qq update && sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev"
+      AFTER_INSTALL_TARGET_DEPENDENCIES: "sudo apt-get -qq update && sudo apt-get remove -y python3-flake8-quotes"
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       BASEDIR: ${{ github.workspace }}/.work
       CACHE_PREFIX: rolling-main
