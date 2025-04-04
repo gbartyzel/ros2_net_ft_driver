@@ -1,4 +1,14 @@
-name: ROS CI
+name: Build Rolling
+
+on:
+  push:
+    branches:
+      - main
+      - rolling
+  pull_request:
+    branches:
+      - main
+      - rolling
 
 env:
   ROS_REPO: main
