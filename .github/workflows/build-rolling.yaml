@@ -7,10 +7,16 @@ on:
   push:
     branches: [rolling]
 
+env:
+  BASEDIR: ${{ github.workspace }}/.work
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CACHE_PREFIX: rolling-main
+  UPSTREAM_WORKSPACE: ros2_net_ft_driver.rolling.repos
+
 jobs:
   industrial_ci:
     name: rolling-main
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 45 # Prevents long-running jobs
 
     strategy:
@@ -19,31 +25,30 @@ jobs:
         ros:
           - { ROS_DISTRO: rolling, ROS_REPO: main }
 
-    env:
-      BASEDIR: ${{ github.workspace }}/.work
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
-      CACHE_PREFIX: rolling-main
-      UPSTREAM_WORKSPACE: ros2_net_ft_driver.rolling.repos
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Cache Upstream Workspace
+      - name: Restore Upstream Workspace Cache
+        id: cache-upstream
         uses: actions/cache@v3
         with:
           path: ${{ env.BASEDIR }}/upstream_ws
-          key: upstream_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles('ros2_net_ft_driver.rolling.repos') }}
+          key: upstream_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles(env.UPSTREAM_WORKSPACE) }}
           restore-keys: upstream_ws-${{ env.CACHE_PREFIX }}-
+        continue-on-error: true
 
-      - name: Cache Target Workspace
+      - name: Restore Target Workspace Cache
+        id: cache-target
         uses: actions/cache@v3
         with:
           path: ${{ env.BASEDIR }}/target_ws
           key: target_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles('**/CMakeLists.txt', '**/package.xml') }}
           restore-keys: target_ws-${{ env.CACHE_PREFIX }}-
+        continue-on-error: true
 
-      - name: Cache CCache
+      - name: Restore CCache
+        id: cache-ccache
         uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
@@ -51,19 +56,22 @@ jobs:
           restore-keys: |
             ccache-${{ env.CACHE_PREFIX }}-
             ccache-${{ env.CACHE_PREFIX }}-${{ github.base_ref }}-
+        continue-on-error: true
 
-      - name: Install Dependencies
+      - name: Install Dependencies (including vcs)
         run: |
           sudo apt-get -qq update
-          sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev
+          sudo apt-get install -y \
+            pkg-config \
+            libasio-dev \
+            libcurlpp-dev \
+            libcurl4-openssl-dev \
+            python3-vcstool  # Required for industrial_ci
 
       - name: Setup Git for Upstream Workspace
         run: |
           sudo apt-get -qq install -y --no-upgrade --no-install-recommends git
           git config --global --add safe.directory "*"
-
-      - name: Pull Upstream Workspace
-        run: vcs pull $BASEDIR/upstream_ws/src
 
       - name: Run industrial_ci
         uses: ros-industrial/industrial_ci@master
