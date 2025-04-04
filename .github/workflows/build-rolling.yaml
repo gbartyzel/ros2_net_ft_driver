@@ -2,96 +2,62 @@ name: Build Rolling
 
 on:
   workflow_dispatch:
+    branches:
+      - rolling
   pull_request:
-    branches: [rolling]
+    branches:
+      - rolling
   push:
-    branches: [rolling]
-
-env:
-  BASEDIR: ${{ github.workspace }}/.work
-  CCACHE_DIR: ${{ github.workspace }}/.ccache
-  CACHE_PREFIX: rolling-main
-  UPSTREAM_WORKSPACE: ros2_net_ft_driver.rolling.repos
+    branches:
+      - rolling
 
 jobs:
   industrial_ci:
     name: rolling-main
-    runs-on: ubuntu-22.04
-    timeout-minutes: 45 # Prevents long-running jobs
-
+    runs-on: ubuntu-24.04
     strategy:
-      fail-fast: false
       matrix:
-        ros:
-          - { ROS_DISTRO: rolling, ROS_REPO: main }
-
+        env:
+          - ROS_DISTRO: rolling
+            ROS_REPO: main
+    env:
+      BEFORE_INSTALL_TARGET_DEPENDENCIES: "sudo apt-get -qq update && sudo apt-get install -y pkg-config libasio-dev libcurlpp-dev libcurl4-openssl-dev"
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      BASEDIR: ${{ github.workspace }}/.work
+      CACHE_PREFIX: rolling-main
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Restore Upstream Workspace Cache
-        id: cache-upstream
-        uses: actions/cache@v3
+      - uses: actions/checkout@v4
         with:
-          path: ${{ env.BASEDIR }}/upstream_ws
-          key: upstream_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles(env.UPSTREAM_WORKSPACE) }}
-          restore-keys: upstream_ws-${{ env.CACHE_PREFIX }}-
-        continue-on-error: true
-
-      - name: Restore Target Workspace Cache
-        id: cache-target
-        uses: actions/cache@v3
+          ref: rolling
+      # The target directory cache doesn't include the source directory because
+      # that comes from the checkout.  See "prepare target_ws for cache" task below
+      - name: Cache target_ws
+        uses: actions/cache@v4
         with:
           path: ${{ env.BASEDIR }}/target_ws
-          key: target_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles('**/CMakeLists.txt', '**/package.xml') }}
-          restore-keys: target_ws-${{ env.CACHE_PREFIX }}-
-        continue-on-error: true
-
-      - name: Restore CCache
-        id: cache-ccache
-        uses: actions/cache@v3
+          key: target_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles('**/CMakeLists.txt', '**/package.xml') }}-${{ github.run_id }}
+          restore-keys: |
+            target_ws-${{ env.CACHE_PREFIX }}-${{ hashFiles('**/CMakeLists.txt', '**/package.xml') }}
+      - name: Cache ccache
+        uses: actions/cache@v4
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ env.CACHE_PREFIX }}-${{ github.sha }}
+          key: ccache-${{ env.CACHE_PREFIX }}-${{ github.sha }}-${{ github.run_id }}
           restore-keys: |
-            ccache-${{ env.CACHE_PREFIX }}-
-            ccache-${{ env.CACHE_PREFIX }}-${{ github.base_ref }}-
-        continue-on-error: true
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get -qq update
-          sudo apt-get install -y \
-            pkg-config \
-            libasio-dev \
-            libcurlpp-dev \
-            libcurl4-openssl-dev
-
-      - name: Setup Git for Upstream Workspace
-        run: |
-          sudo apt-get -qq install -y --no-upgrade --no-install-recommends git
-          git config --global --add safe.directory "*"
-
-      - name: Run industrial_ci
-        uses: ros-industrial/industrial_ci@master
-        env: ${{ matrix.ros }}
-
-      - name: Upload Test Artifacts (on failure)
-        if: failure()
+            ccache-${{ env.CACHE_PREFIX }}-${{ github.sha }}
+            ccache-${{ env.CACHE_PREFIX }}
+      - uses: "ros-industrial/industrial_ci@master"
+        env: ${{ matrix.env }}
+      - name: upload test artifacts (on failure)
         uses: actions/upload-artifact@v4
+        if: failure()
         with:
           name: test-results
           path: ${{ env.BASEDIR }}/target_ws/**/test_results/**/*.xml
-
-      - name: Prepare Target Workspace for Cache
-        if: always()
+      - name: prepare target_ws for cache
+        if: ${{ always()}}
         run: |
-          echo "Before cleanup:"
           du -sh ${{ env.BASEDIR }}/target_ws
-
-          # Clean up test results and src directory before caching
           sudo find ${{ env.BASEDIR }}/target_ws -wholename '*/test_results/*' -delete
           sudo rm -rf ${{ env.BASEDIR }}/target_ws/src
-
-          echo "After cleanup:"
           du -sh ${{ env.BASEDIR }}/target_ws
