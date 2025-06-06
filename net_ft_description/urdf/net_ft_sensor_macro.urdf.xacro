@@ -21,7 +21,7 @@
     </xacro:macro>
 
     <xacro:if value="${sensor_type == 'ati_axia'}">
-      <xacro:property name="mesh_file" value="ati_axia80_ft_sensor"/>
+      <xacro:property name="mesh_file" value="ati_axia80_ft_sensor_corrected_origin"/>
       <xacro:property name="sensor_mass" value="0.28"/>
       <xacro:property name="sensor_radius" value="0.082"/>
       <xacro:property name="sensor_height" value="0.0254"/>
@@ -44,11 +44,11 @@
     <joint name="${prefix}fts_joint" type="fixed">
       <!-- The parent link must be read from the robot model it is attached to. -->
       <parent link="${parent}"/>
-      <child link="${prefix}fts_link"/>
+      <child link="${prefix}fts_base_link"/>
       <xacro:insert_block name="origin" />
     </joint>
 
-    <link name="${prefix}fts_link">
+    <link name="${prefix}fts_base_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
@@ -66,11 +66,11 @@
       </xacro:cylinder_inertial>
     </link>
     <joint name="${prefix}tool_side_joint" type="fixed">
-      <parent link="${prefix}fts_link"/>
-      <child link="${prefix}tool_mount_link"/>
+      <parent link="${prefix}fts_base_link"/>
+      <child link="${prefix}sensing_link"/>
       <origin xyz="0 0 ${sensor_height}" rpy="0 0 0"/>
     </joint>
-    <link name="${prefix}tool_mount_link"/>
+    <link name="${prefix}sensing_link"/>
 
     <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor.ros2_control.xacro" />
     <xacro:net_ft_sensor_ros2_control
