@@ -80,6 +80,7 @@
       ip_address="${ip_address}"
       rdt_sampling_rate="${rdt_sampling_rate}"
       internal_filter_rate="${internal_filter_rate}"
-      use_hardware_biasing="${use_hardware_biasing}"/>
+      use_hardware_biasing="${use_hardware_biasing}"
+      prefix="${prefix}"/>
   </xacro:macro>
 </robot>
