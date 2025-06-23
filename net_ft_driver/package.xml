@@ -15,6 +15,7 @@
 
   <depend>asio</depend>
   <depend>asio_cmake_module</depend>
+  <depend>curlpp-dev</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
