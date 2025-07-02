@@ -25,7 +25,6 @@ sudo apt update
 sudo apt dist-upgrade
 rosdep update
 git -C src clone --branch galactic https://github.com/gbartyzel/ros2_net_ft_driver.git
-sudo apt install -y libasio-dev libcurlpp-dev
 rosdep install --ignore-src --from-paths src -y -r --rosdistro $ROS_DISTRO
 ```
 
