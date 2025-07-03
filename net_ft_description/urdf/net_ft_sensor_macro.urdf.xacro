@@ -22,7 +22,7 @@
     </xacro:macro>
 
     <xacro:if value="${sensor_type == 'ati_axia'}">
-      <xacro:property name="mesh_file" value="ati_axia80_ft_sensor_corrected_origin"/>
+      <xacro:property name="mesh_file" value="ati_axia80_ft_sensor"/>
       <xacro:property name="sensor_mass" value="0.28"/>
       <xacro:property name="sensor_radius" value="0.082"/>
       <xacro:property name="sensor_height" value="0.0254"/>
