@@ -50,7 +50,7 @@ constexpr uint32_t kStartStreaming = 0x0002;
 namespace net_ft_driver
 {
 NetFTInterface::NetFTInterface(const std::string& ip_address, int max_sampling_freq)
-  : socket_(io_service_)
+  : socket_(io_context_)
   , ip_address_(ip_address)
   , force_scale_(1.0)
   , torque_scale_(1.0)
@@ -65,7 +65,7 @@ NetFTInterface::NetFTInterface(const std::string& ip_address, int max_sampling_f
   , status_(0)
   , ft_values_({ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 })
 {
-  asio::ip::udp::endpoint endpoint(asio::ip::address_v4::from_string(ip_address), kPort);
+  asio::ip::udp::endpoint endpoint(asio::ip::make_address(ip_address), kPort);
   socket_.open(asio::ip::udp::v4());
   socket_.connect(endpoint);
 
