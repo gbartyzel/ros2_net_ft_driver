@@ -117,7 +117,7 @@ protected:
 
   void unpack(uint8_t* buffer);
 
-  asio::io_service io_service_;
+  asio::io_context io_context_;
   asio::ip::udp::socket socket_;
 
   std::string ip_address_;
