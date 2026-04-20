@@ -152,7 +152,7 @@ def generate_launch_description():
             default_value="0",
             description=(
                 "The internal low pass filter rate, "
-                "refer for specific values to the sensor manuals.",
+                "refer for specific values to the sensor manuals."
             ),
         )
     )
