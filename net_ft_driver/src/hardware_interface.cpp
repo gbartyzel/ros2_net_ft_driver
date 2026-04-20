@@ -1,41 +1,31 @@
 // Copyright (c) 2022, Grzegorz Bartyzel
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//    * Redistributions of source code must retain the above copyright
-//      notice, this list of conditions and the following disclaimer.
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-//    * Redistributions in binary form must reproduce the above copyright
-//      notice, this list of conditions and the following disclaimer in the
-//      documentation and/or other materials provided with the distribution.
-//
-//    * Neither the name of the {copyright_holder} nor the names of its
-//      contributors may be used to endorse or promote products derived from
-//      this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "net_ft_driver/hardware_interface.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "rclcpp/rclcpp.hpp"
+
 #include "hardware_interface/sensor_interface.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
+
+#include "net_ft_driver/types.hpp"
 #include "net_ft_driver/interfaces/net_ft_interface.hpp"
-#include "rclcpp/rclcpp.hpp"
 
 const auto kLogger = rclcpp::get_logger("NetFtHardwareInerface");
 
@@ -59,8 +49,8 @@ hardware_interface::CallbackReturn NetFtHardwareInterface::on_init(const hardwar
 
   ip_address_ = info_.hardware_parameters["ip_address"];
   sensor_type_ = info_.hardware_parameters["sensor_type"];
-  int rdt_rate = std::stoi(info_.hardware_parameters["rdt_sampling_rate"]);
-  int internal_filter_rate = std::stoi(info_.hardware_parameters["internal_filter_rate"]);
+  const int rdt_rate = std::stoi(info_.hardware_parameters["rdt_sampling_rate"]);
+  const int internal_filter_rate = std::stoi(info_.hardware_parameters["internal_filter_rate"]);
 
   driver_ = NetFTInterface::create(sensor_type_, ip_address_);
 
@@ -82,10 +72,10 @@ std::vector<hardware_interface::StateInterface> NetFtHardwareInterface::export_s
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
 
-  for (auto& sensor : info_.sensors) {
-    for (size_t j = 0; j < sensor.state_interfaces.size(); ++j) {
-      state_interfaces.emplace_back(hardware_interface::StateInterface(sensor.name, sensor.state_interfaces[j].name,
-                                                                       &ft_sensor_measurements_[j]));
+  for (const auto& sensor : info_.sensors) {
+    for (std::size_t idx = 0; idx < sensor.state_interfaces.size(); ++idx) {
+      state_interfaces.emplace_back(hardware_interface::StateInterface(sensor.name, sensor.state_interfaces[idx].name,
+                                                                       &ft_sensor_measurements_[idx]));
     }
   }
 
@@ -101,8 +91,10 @@ hardware_interface::CallbackReturn
 NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   std::string use_hardware_biasing = info_.hardware_parameters["use_hardware_biasing"];
+  std::transform(use_hardware_biasing.begin(), use_hardware_biasing.end(), use_hardware_biasing.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
   if (driver_->start_streaming()) {
-    if (use_hardware_biasing == "True" || use_hardware_biasing == "true") {
+    if (use_hardware_biasing == "true") {
       if (!driver_->set_bias()) {
         RCLCPP_FATAL(kLogger, "Couldn't zero sensor with software bias!");
         return hardware_interface::CallbackReturn::ERROR;
@@ -113,7 +105,7 @@ NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State& /*previous_st
         return hardware_interface::CallbackReturn::ERROR;
       }
     }
-    std::unique_ptr<SensorData> data = driver_->receive_data();
+    const auto data = driver_->receive_data();
     if (data) {
       ft_sensor_measurements_ = data->ft_values;
       RCLCPP_INFO(kLogger, "Successfully started data streaming!");
@@ -138,7 +130,7 @@ NetFtHardwareInterface::on_deactivate(const rclcpp_lifecycle::State& /*previous_
 hardware_interface::return_type NetFtHardwareInterface::read(const rclcpp::Time& /*time*/,
                                                              const rclcpp::Duration& /*period*/)
 {
-  auto data = driver_->receive_data();
+  const auto data = driver_->receive_data();
   if (data) {
     ft_sensor_measurements_ = data->ft_values;
     lost_packets_ = static_cast<double>(data->lost_packets);

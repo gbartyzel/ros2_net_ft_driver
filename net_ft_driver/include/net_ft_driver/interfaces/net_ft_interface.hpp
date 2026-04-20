@@ -1,30 +1,16 @@
 // Copyright (c) 2022, Grzegorz Bartyzel
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//    * Redistributions of source code must retain the above copyright
-//      notice, this list of conditions and the following disclaimer.
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-//    * Redistributions in binary form must reproduce the above copyright
-//      notice, this list of conditions and the following disclaimer in the
-//      documentation and/or other materials provided with the distribution.
-//
-//    * Neither the name of the {copyright_holder} nor the names of its
-//      contributors may be used to endorse or promote products derived from
-//      this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef NET_FT_DRIVER__INTERFACES__NET_FT_INTERFACE_HPP_
 #define NET_FT_DRIVER__INTERFACES__NET_FT_INTERFACE_HPP_
@@ -37,25 +23,11 @@
 #include <utility>
 
 #include "asio.hpp"
-#include "curlpp/Easy.hpp"
-#include "curlpp/Options.hpp"
-#include "curlpp/cURLpp.hpp"
+
+#include "net_ft_driver/types.hpp"
 
 namespace net_ft_driver
 {
-using Vector6D = std::array<double, 6>;
-
-using Vecotr6I32 = std::array<int32_t, 6>;
-
-struct SensorData
-{
-  Vector6D ft_values;
-  uint32_t lost_packets;
-  uint32_t packet_count;
-  uint32_t out_of_order_count;
-  uint32_t status;
-};
-
 class NetFTInterface;
 
 class NetFTFactory
@@ -72,7 +44,7 @@ class NetFTInterface
 public:
   static std::unique_ptr<NetFTInterface> create(const std::string& sensor_type, const std::string& ip_address)
   {
-    return std::move(get_factory_instance()[sensor_type]->create(ip_address));
+    return get_factory_instance()[sensor_type]->create(ip_address);
   }
 
   static void register_type(const std::string& sensor_type, NetFTFactory* factory)
@@ -98,7 +70,7 @@ public:
 
   virtual bool set_internal_filter(int rate) = 0;
 
-  std::unique_ptr<SensorData> receive_data();
+  std::unique_ptr<types::SensorData> receive_data();
 
 protected:
   static std::map<std::string, NetFTFactory*>& get_factory_instance()
@@ -107,15 +79,15 @@ protected:
     return map_instance;
   }
 
-  bool send_command(uint32_t command, uint32_t sample_count = 0);
+  bool send_command(std::uint32_t command, std::uint32_t sample_count = 0);
 
   std::string get_config(const std::string& xml_name);
 
   std::string parse_config(const std::string& response, const std::string& root, const std::string& var_name);
 
-  void pack(uint8_t* buffer, uint32_t command, uint32_t sample_count) const;
+  void pack(std::uint8_t* buffer, std::uint32_t command, std::uint32_t sample_count) const;
 
-  void unpack(uint8_t* buffer);
+  void unpack(std::uint8_t* buffer);
 
   asio::io_context io_context_;
   asio::ip::udp::socket socket_;
@@ -128,17 +100,17 @@ protected:
   int min_sampling_freq_;
   int max_sampling_freq_;
 
-  uint32_t rdt_sequence_;
-  uint32_t ft_sequence_;
-  uint32_t last_rdt_sequence_;
+  std::uint32_t rdt_sequence_;
+  std::uint32_t ft_sequence_;
+  std::uint32_t last_rdt_sequence_;
 
-  uint32_t lost_packets_;
-  uint32_t packet_count_;
-  uint32_t out_of_order_count_;
-  uint32_t status_;
+  std::uint32_t lost_packets_;
+  std::uint32_t packet_count_;
+  std::uint32_t out_of_order_count_;
+  std::uint32_t status_;
 
-  Vector6D ft_values_;
-  Vecotr6I32 raw_counts_;
+  types::Vector6D ft_values_;
+  types::Vecotr6I32 raw_counts_;
 };
 }  // namespace net_ft_driver
 
