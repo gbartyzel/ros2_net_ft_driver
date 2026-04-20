@@ -32,6 +32,9 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <thread>
+#include <chrono>
+#include <mutex>
 
 #include "rclcpp/macros.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -70,6 +73,9 @@ public:
   NET_FT_DRIVER_PUBLIC
   hardware_interface::return_type read(const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
+  NET_FT_DRIVER_PUBLIC
+  void read_wrapper();
+
 private:
   std::unique_ptr<NetFTInterface> driver_;
 
@@ -83,6 +89,12 @@ private:
   double lost_packets_;
   double out_of_order_count_;
   double status_;
+
+  bool first_read_pass_, first_write_pass_ = true ;
+  rclcpp::Time last_read_time_ ;
+  std::thread read_thread_;
+  std::mutex mutex_;
+  bool deactivate_requested_ = false;
 };
 }  // namespace net_ft_driver
 

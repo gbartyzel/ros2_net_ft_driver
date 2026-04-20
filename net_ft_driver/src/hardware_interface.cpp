@@ -101,6 +101,9 @@ hardware_interface::CallbackReturn
 NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   std::string use_hardware_biasing = info_.hardware_parameters["use_hardware_biasing"];
+  first_read_pass_ = first_write_pass_ = true;
+  std::unique_lock<std::mutex> lock(mutex_);
+  deactivate_requested_ = false;
   if (driver_->start_streaming()) {
     if (use_hardware_biasing == "True" || use_hardware_biasing == "true") {
       if (!driver_->set_bias()) {
@@ -117,6 +120,9 @@ NetFtHardwareInterface::on_activate(const rclcpp_lifecycle::State& /*previous_st
     if (data) {
       ft_sensor_measurements_ = data->ft_values;
       RCLCPP_INFO(kLogger, "Successfully started data streaming!");
+
+      read_thread_ = std::thread( [this] { this->read_wrapper(); } );
+
       return hardware_interface::CallbackReturn::SUCCESS;
     }
   }
@@ -128,6 +134,8 @@ hardware_interface::CallbackReturn
 NetFtHardwareInterface::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   if (driver_->stop_streaming()) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    deactivate_requested_ = true;
     RCLCPP_INFO(kLogger, "Successfully stoped data streaming!");
     return hardware_interface::CallbackReturn::SUCCESS;
   }
@@ -135,11 +143,24 @@ NetFtHardwareInterface::on_deactivate(const rclcpp_lifecycle::State& /*previous_
   return hardware_interface::CallbackReturn::ERROR;
 }
 
+void NetFtHardwareInterface::read_wrapper()
+{
+  while(!deactivate_requested_) 
+  {
+    std::this_thread::sleep_for(std::chrono::microseconds(500));
+    std::unique_lock<std::mutex> lock(mutex_);
+    driver_->receive_data();
+  }
+}
+
 hardware_interface::return_type NetFtHardwareInterface::read(const rclcpp::Time& /*time*/,
                                                              const rclcpp::Duration& /*period*/)
 {
+  std::unique_lock<std::mutex> lock(mutex_);
   auto data = driver_->receive_data();
+  lock.unlock();
   if (data) {
+    // hardware comms and operations
     ft_sensor_measurements_ = data->ft_values;
     lost_packets_ = static_cast<double>(data->lost_packets);
     packet_count_ = static_cast<double>(data->packet_count);

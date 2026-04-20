@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="net_ft_sensor" params="
+    name
     prefix
     parent
     *origin
@@ -44,11 +45,11 @@
     <joint name="${prefix}fts_joint" type="fixed">
       <!-- The parent link must be read from the robot model it is attached to. -->
       <parent link="${parent}"/>
-      <child link="${prefix}fts_link"/>
+      <child link="${prefix}fts_base_link"/>
       <xacro:insert_block name="origin" />
     </joint>
 
-    <link name="${prefix}fts_link">
+    <link name="${prefix}fts_base_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
@@ -66,19 +67,20 @@
       </xacro:cylinder_inertial>
     </link>
     <joint name="${prefix}tool_side_joint" type="fixed">
-      <parent link="${prefix}fts_link"/>
-      <child link="${prefix}tool_mount_link"/>
+      <parent link="${prefix}fts_base_link"/>
+      <child link="${prefix}sensing_link"/>
       <origin xyz="0 0 ${sensor_height}" rpy="0 0 0"/>
     </joint>
-    <link name="${prefix}tool_mount_link"/>
+    <link name="${prefix}sensing_link"/>
 
     <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor.ros2_control.xacro" />
     <xacro:net_ft_sensor_ros2_control
-      name="NetFtHardwareInterface"
+      name="${name}"
       sensor_type="${sensor_type}"
       ip_address="${ip_address}"
       rdt_sampling_rate="${rdt_sampling_rate}"
       internal_filter_rate="${internal_filter_rate}"
-      use_hardware_biasing="${use_hardware_biasing}"/>
+      use_hardware_biasing="${use_hardware_biasing}"
+      prefix="${prefix}"/>
   </xacro:macro>
 </robot>
