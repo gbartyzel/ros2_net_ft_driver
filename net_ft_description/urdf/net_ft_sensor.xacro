@@ -78,7 +78,7 @@
     </joint>
     <link name="${prefix}tool_mount_link" />
 
-    <xacro:if value="$(arg use_physical_hardware)">
+    <xacro:if value="${use_physical_hardware}">
       <xacro:include filename="$(find net_ft_description)/urdf/net_ft_sensor.ros2_control.xacro" />
       <xacro:net_ft_sensor_ros2_control
         name="NetFtHardwareInterface"
