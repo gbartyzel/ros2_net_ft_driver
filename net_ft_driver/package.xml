@@ -17,6 +17,8 @@
   <depend>asio_cmake_module</depend>
   <depend>curlpp-dev</depend>
   <depend>hardware_interface</depend>
+  <depend>net_ft_description</depend>
+  <depend>net_ft_diagnostic_broadcaster</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
