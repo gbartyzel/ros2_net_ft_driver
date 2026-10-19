@@ -5,6 +5,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   ament_cmake
   ASIO
@@ -46,6 +48,13 @@ ament_target_dependencies(
   ${PROJECT_NAME}
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
+target_compile_options(
+  ${PROJECT_NAME}
+  PRIVATE
+  "$<$<CONFIG:DEBUG>:-O0>"
+  "$<$<CONFIG:RELEASE>:-O2>"
+)
+
 pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
 
 install(

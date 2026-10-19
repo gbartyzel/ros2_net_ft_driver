@@ -1,32 +1,20 @@
 // Copyright (c) 2022, Grzegorz Bartyzel
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//    * Redistributions of source code must retain the above copyright
-//      notice, this list of conditions and the following disclaimer.
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-//    * Redistributions in binary form must reproduce the above copyright
-//      notice, this list of conditions and the following disclaimer in the
-//      documentation and/or other materials provided with the distribution.
-//
-//    * Neither the name of the {copyright_holder} nor the names of its
-//      contributors may be used to endorse or promote products derived from
-//      this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "net_ft_diagnostic_broadcaster/net_ft_diagnostic_broadcaster.hpp"
+
+#include <cstdint>
 
 #include "rclcpp/rclcpp.hpp"
 #include "diagnostic_updater/diagnostic_status_wrapper.hpp"
@@ -46,6 +34,9 @@ controller_interface::CallbackReturn NetFTDiagnosticBroadcaster::on_init()
     return controller_interface::CallbackReturn::ERROR;
   }
   last_packet_count_ = 0;
+  last_lost_packets_ = 0;
+  last_out_of_order_count_ = 0;
+  last_status_ = 0;
   diagnostic_publisher_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -107,10 +98,13 @@ void NetFTDiagnosticBroadcaster::publish_diagnostic()
   diag_array_.status.clear();
   diagnostic_updater::DiagnosticStatusWrapper diag_status;
 
-  auto packet_count = static_cast<uint32_t>(state_interfaces_[0].get_value());
-  auto lost_packets = static_cast<uint32_t>(state_interfaces_[1].get_value());
-  auto status = static_cast<uint32_t>(state_interfaces_[2].get_value());
-  auto out_of_order_count = static_cast<uint32_t>(state_interfaces_[3].get_value());
+  const auto packet_count =
+      static_cast<std::uint32_t>(state_interfaces_[0].get_optional().value_or(last_packet_count_));
+  const auto lost_packets =
+      static_cast<std::uint32_t>(state_interfaces_[1].get_optional().value_or(last_lost_packets_));
+  const auto status = static_cast<std::uint32_t>(state_interfaces_[2].get_optional().value_or(last_status_));
+  const auto out_of_order_count =
+      static_cast<std::uint32_t>(state_interfaces_[3].get_optional().value_or(last_out_of_order_count_));
 
   if (last_packet_count_ == packet_count) {
     diag_status.mergeSummary(diagnostic_updater::DiagnosticStatusWrapper::ERROR, "No new data received!");
@@ -126,6 +120,7 @@ void NetFTDiagnosticBroadcaster::publish_diagnostic()
   diag_status.addf("Out-of-order packets", "%u", out_of_order_count);
 
   last_packet_count_ = packet_count;
+  last_lost_packets_ = lost_packets;
   diag_array_.status.push_back(diag_status);
   diag_array_.header.stamp = get_node()->get_clock()->now();
 

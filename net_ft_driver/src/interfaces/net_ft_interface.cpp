@@ -1,30 +1,16 @@
 // Copyright (c) 2022, Grzegorz Bartyzel
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//    * Redistributions of source code must retain the above copyright
-//      notice, this list of conditions and the following disclaimer.
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-//    * Redistributions in binary form must reproduce the above copyright
-//      notice, this list of conditions and the following disclaimer in the
-//      documentation and/or other materials provided with the distribution.
-//
-//    * Neither the name of the {copyright_holder} nor the names of its
-//      contributors may be used to endorse or promote products derived from
-//      this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "net_ft_driver/interfaces/net_ft_interface.hpp"
 
@@ -38,14 +24,22 @@
 #include <sstream>
 #include <string>
 
+#include "asio.hpp"
+#include "curlpp/Easy.hpp"
+#include "curlpp/Options.hpp"
+#include "curlpp/cURLpp.hpp"
+
+namespace
+{
 constexpr int kPort = 49152;
 
-constexpr uint16_t kHeader = 0x1234;
-constexpr uint16_t kCommandSize = 8;
-constexpr uint16_t kRecordSize = 36;
+constexpr std::uint16_t kHeader = 0x1234;
+constexpr std::uint16_t kCommandSize = 8;
+constexpr std::uint16_t kRecordSize = 36;
 
-constexpr uint32_t kStopStreaming = 0x0000;
-constexpr uint32_t kStartStreaming = 0x0002;
+constexpr std::uint32_t kStopStreaming = 0x0000;
+constexpr std::uint32_t kStartStreaming = 0x0002;
+}  // namespace
 
 namespace net_ft_driver
 {
@@ -69,7 +63,7 @@ NetFTInterface::NetFTInterface(const std::string& ip_address, int max_sampling_f
   socket_.open(asio::ip::udp::v4());
   socket_.connect(endpoint);
 
-  auto cal_config = get_config("netftcalapi.xml");
+  const auto cal_config = get_config("netftcalapi.xml");
   force_scale_ = 1.0 / std::stod(parse_config(cal_config, "netftCalibration", "calcpf"));
   torque_scale_ = 1.0 / std::stod(parse_config(cal_config, "netftCalibration", "calcpt"));
 }
@@ -90,10 +84,10 @@ bool NetFTInterface::stop_streaming()
   return send_command(kStopStreaming);
 }
 
-std::unique_ptr<SensorData> NetFTInterface::receive_data()
+std::unique_ptr<types::SensorData> NetFTInterface::receive_data()
 {
-  uint8_t buffer[kRecordSize + 1];
-  size_t len = socket_.receive(asio::buffer(buffer, kRecordSize + 1));
+  std::uint8_t buffer[kRecordSize + 1];
+  const std::size_t len = socket_.receive(asio::buffer(buffer, kRecordSize + 1));
   if (len != kRecordSize) {
     return nullptr;
   }
@@ -107,15 +101,14 @@ std::unique_ptr<SensorData> NetFTInterface::receive_data()
     lost_packets_ += (seq_diff - 1);
   }
   last_rdt_sequence_ = rdt_sequence_;
-  std::unique_ptr<SensorData> data(
-      new SensorData{ ft_values_, lost_packets_, packet_count_, out_of_order_count_, status_ });
-  return data;
+  return std::make_unique<types::SensorData>(
+      types::SensorData{ ft_values_, lost_packets_, packet_count_, out_of_order_count_, status_ });
 }
 
-bool NetFTInterface::send_command(uint32_t command, uint32_t sample_count)
+bool NetFTInterface::send_command(std::uint32_t command, std::uint32_t sample_count)
 {
   try {
-    uint8_t buffer[kRecordSize];
+    std::uint8_t buffer[kRecordSize];
     pack(buffer, command, sample_count);
     socket_.send(asio::buffer(buffer, kCommandSize));
     return true;
@@ -167,24 +160,24 @@ std::string NetFTInterface::parse_config(const std::string& response, const std:
   return "";
 }
 
-void NetFTInterface::pack(uint8_t* buffer, uint32_t command, uint32_t sample_count) const
+void NetFTInterface::pack(std::uint8_t* buffer, std::uint32_t command, std::uint32_t sample_count) const
 {
-  *reinterpret_cast<uint16_t*>(&buffer[0]) = htons(kHeader);
-  *reinterpret_cast<uint16_t*>(&buffer[2]) = htons(command);
-  *reinterpret_cast<uint32_t*>(&buffer[4]) = htonl(sample_count);
+  *reinterpret_cast<std::uint16_t*>(&buffer[0]) = htons(kHeader);
+  *reinterpret_cast<std::uint16_t*>(&buffer[2]) = htons(command);
+  *reinterpret_cast<std::uint32_t*>(&buffer[4]) = htonl(sample_count);
 }
 
-void NetFTInterface::unpack(uint8_t* buffer)
+void NetFTInterface::unpack(std::uint8_t* buffer)
 {
-  rdt_sequence_ = ntohl(*reinterpret_cast<uint32_t*>(&buffer[0]));
-  ft_sequence_ = ntohl(*reinterpret_cast<uint32_t*>(&buffer[4]));
-  status_ = ntohl(*reinterpret_cast<uint32_t*>(&buffer[8]));
-  for (int i = 0; i < 6; i++) {
-    raw_counts_[i] = ntohl(*reinterpret_cast<int32_t*>(&buffer[12 + i * 4]));
-    if (i < 3) {
-      ft_values_[i] = static_cast<double>(raw_counts_[i]) * force_scale_;
+  rdt_sequence_ = ntohl(*reinterpret_cast<std::uint32_t*>(&buffer[0]));
+  ft_sequence_ = ntohl(*reinterpret_cast<std::uint32_t*>(&buffer[4]));
+  status_ = ntohl(*reinterpret_cast<std::uint32_t*>(&buffer[8]));
+  for (int idx = 0; idx < 6; idx++) {
+    raw_counts_[idx] = ntohl(*reinterpret_cast<int32_t*>(&buffer[12 + idx * 4]));
+    if (idx < 3) {
+      ft_values_[idx] = static_cast<double>(raw_counts_[idx]) * force_scale_;
     } else {
-      ft_values_[i] = static_cast<double>(raw_counts_[i]) * torque_scale_;
+      ft_values_[idx] = static_cast<double>(raw_counts_[idx]) * torque_scale_;
     }
   }
 }
